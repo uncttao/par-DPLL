@@ -16,12 +16,8 @@ void unit_propagation(Formula& formula, int u) {
     auto literalsIn = formula.literalsIn;
 
     // remove every clause containing "u"
-    auto clausesOfU = clausesOf[u];
-    for (auto& clauseOfU: clausesOfU) {
-        for (auto& literal: literalsIn[clauseOfU]) {
-            clausesOf[literal].erase(clauseOfU);
-        }
-        literalsIn[clauseOfU].clear();
+    for (auto& clauseOfU: clausesOf[u]) {
+        formula.clauseStatuses[clauseOfU] = Deleted;
     }
 
     // remove every "~u" from every clause

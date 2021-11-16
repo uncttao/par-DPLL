@@ -2,6 +2,11 @@
 #define PAR_DPLL_FORMULA_H
 
 #include <vector>
+#include <cstdlib>
+
+enum ClauseStatus {
+    Present, Deleted
+};
 
 typedef struct Formula {
     int numClauses;
@@ -10,11 +15,14 @@ typedef struct Formula {
     Set* clausesOf;
     Set* literalsIn;
 
+    ClauseStatus* clauseStatuses;
+
     Formula(int nClauses, int lSize) {
         numClauses = nClauses;
         literalSize = lSize;
         clausesOf = new Set[lSize * 2 + 1];
         literalsIn = new Set[nClauses];
+        clauseStatuses = (ClauseStatus*) calloc(nClauses, sizeof(ClauseStatus));
     }
 
     static int literal_size(vector<vector<int>>& cnf) {
@@ -50,8 +58,12 @@ typedef struct Formula {
     [[nodiscard]] vector<vector<int>>* produce() const {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
+            if (clauseStatuses[c] == Deleted) {
+                continue;
+            }
+
             cnf->push_back(vector<int>());
-            auto& cnfClause = cnf->at(c);
+            auto& cnfClause = cnf->back();
             for (auto& literal: literalsIn[c]) {
                 cnfClause.push_back(cnf_literal(literal));
             }
@@ -62,18 +74,22 @@ typedef struct Formula {
     }
 
     [[nodiscard]] vector<vector<int>>* produce2() const {
-        auto cnf = new vector<vector<int>>();
-        cnf->resize(numClauses);
+        auto _cnf = new vector<vector<int>>();
+        _cnf->resize(numClauses);
         for (auto literal = 0; literal < literalSize * 2 + 1; literal++) {
             auto clausesOfLiteral = clausesOf[literal];
             for (auto clause: clausesOfLiteral) {
-                cnf->at(clause).push_back(cnf_literal(literal));
+                _cnf->at(clause).push_back(cnf_literal(literal));
             }
         }
 
+        auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
-            auto& cnfClause = cnf->at(c);
-            sort(cnfClause.begin(), cnfClause.end());
+            auto& cnfClause = _cnf->at(c);
+            if (clauseStatuses[c] == Present) {
+                cnf->push_back(cnfClause);
+                sort(cnf->back().begin(), cnf->back().end());
+            }
         }
         return cnf;
     }
