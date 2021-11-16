@@ -15,6 +15,7 @@ void test_unit_propagation1() {
     unit_propagation(*f, 6/*-2*/);
     vector<vector<int>> expected{vector<int>{-1, 3}, vector<int>{}, vector<int>{-4, -1}};
     assert(equal(expected.begin(), expected.end(), f->produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f->produce2()->begin()));
 }
 
 void test_unit_propagation2() {
@@ -23,6 +24,7 @@ void test_unit_propagation2() {
     unit_propagation(*f, 2);
     vector<vector<int>> expected{vector<int>{}, vector<int>{-3, 4}, vector<int>{}};
     assert(equal(expected.begin(), expected.end(), f->produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f->produce2()->begin()));
 }
 
 void test_unit_propagation3() {
@@ -31,6 +33,7 @@ void test_unit_propagation3() {
     unit_propagation(*f, 8/*-4*/);
     vector<vector<int>> expected{vector<int>{-1, 2, 3}, vector<int>{-3, -2}, vector<int>{}};
     assert(equal(expected.begin(), expected.end(), f->produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f->produce2()->begin()));
 }
 
 void test_unit_propagation4() {
@@ -39,6 +42,7 @@ void test_unit_propagation4() {
     unit_propagation(*f, 3);
     vector<vector<int>> expected{vector<int>{}, vector<int>{}, vector<int>{-1, 2, 4}};
     assert(equal(expected.begin(), expected.end(), f->produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f->produce2()->begin()));
 }
 
 void test_unit_propagation5() {
@@ -47,6 +51,7 @@ void test_unit_propagation5() {
     unit_propagation(*f, 6/*-2*/);
     vector<vector<int>> expected{vector<int>{}, vector<int>{}, vector<int>{-1, 4}};
     assert(equal(expected.begin(), expected.end(), f->produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f->produce2()->begin()));
 }
 
 void test_unit_propagation() {
