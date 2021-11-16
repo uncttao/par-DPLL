@@ -47,7 +47,7 @@ typedef struct Formula {
         return f;
     }
 
-    vector<vector<int>>* produce() const {
+    [[nodiscard]] vector<vector<int>>* produce() const {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
             cnf->push_back(vector<int>());
@@ -61,7 +61,7 @@ typedef struct Formula {
         return cnf;
     }
 
-    vector<vector<int>>* produce2() const {
+    [[nodiscard]] vector<vector<int>>* produce2() const {
         auto cnf = new vector<vector<int>>();
         cnf->resize(numClauses);
         for (auto literal = 0; literal < literalSize * 2 + 1; literal++) {
@@ -78,7 +78,9 @@ typedef struct Formula {
         return cnf;
     }
 
-    int cnf_literal(int literal) const { return literal <= literalSize ? literal : -(literal - literalSize); }
+    [[nodiscard]] int cnf_literal(int literal) const {
+        return literal <= literalSize ? literal : -(literal - literalSize);
+    }
 
 } Formula;
 
