@@ -11,12 +11,13 @@ bool dpll() {
     return false;
 }
 
-void unit_propagation(int n, int u, Formula& formula) {
+void unit_propagation(Formula& formula, int u) {
     auto clausesOf = formula.clausesOf;
     auto literalsIn = formula.literalsIn;
 
     // remove every clause containing "u"
-    for (auto& clauseOfU: clausesOf[u]) {
+    auto clausesOfU = clausesOf[u];
+    for (auto& clauseOfU: clausesOfU) {
         for (auto& literal: literalsIn[clauseOfU]) {
             clausesOf[literal].erase(clauseOfU);
         }
@@ -24,6 +25,7 @@ void unit_propagation(int n, int u, Formula& formula) {
     }
 
     // remove every "~u" from every clause
+    auto n = formula.literalSize;
     auto nu = u < n ? u + n : u - n;
     for (auto& clauseOfNu: clausesOf[nu]) {
         literalsIn[clauseOfNu].erase(nu);
