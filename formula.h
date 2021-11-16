@@ -98,6 +98,21 @@ typedef struct Formula {
         return literal <= literalSize ? literal : -(literal - literalSize);
     }
 
+    void unit_propagation(int u) const {
+        // remove every clause containing "u"
+        for (auto& clauseOfU: clausesOf[u]) {
+            clauseStatuses[clauseOfU] = Deleted;
+        }
+
+        // remove every "~u" from every clause
+        auto n = literalSize;
+        auto nu = u < n ? u + n : u - n;
+        for (auto& clauseOfNu: clausesOf[nu]) {
+            literalsIn[clauseOfNu].erase(nu);
+        }
+        clausesOf[nu].clear();
+    }
+
 } Formula;
 
 
