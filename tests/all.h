@@ -6,8 +6,7 @@
 #include "unit-propagation.h"
 
 void test_all() {
-    test_formula_convert_and_produce();
-    test_formula_convert();
+    test_formula();
     test_unit_propagation();
 }
 

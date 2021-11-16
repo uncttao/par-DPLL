@@ -13,7 +13,7 @@ typedef struct Formula {
     Formula(int nClauses, int lSize) {
         numClauses = nClauses;
         literalSize = lSize;
-        clausesOf = new Set[(lSize + 1) * 2];
+        clausesOf = new Set[lSize * 2 + 1];
         literalsIn = new Set[nClauses];
     }
 
@@ -53,14 +53,32 @@ typedef struct Formula {
             cnf->push_back(vector<int>());
             auto& cnfClause = cnf->at(c);
             for (auto& literal: literalsIn[c]) {
-                auto cnfLiteral = literal <= literalSize ? literal : -(literal - literalSize);
-                cnfClause.push_back(cnfLiteral);
+                cnfClause.push_back(cnf_literal(literal));
             }
             sort(cnfClause.begin(), cnfClause.end());
         }
 
         return cnf;
     }
+
+    vector<vector<int>>* produce2() const {
+        auto cnf = new vector<vector<int>>();
+        cnf->resize(numClauses);
+        for (auto literal = 0; literal < literalSize * 2 + 1; literal++) {
+            auto clausesOfLiteral = clausesOf[literal];
+            for (auto clause: clausesOfLiteral) {
+                cnf->at(clause).push_back(cnf_literal(literal));
+            }
+        }
+
+        for (auto c = 0; c < numClauses; c++) {
+            auto& cnfClause = cnf->at(c);
+            sort(cnfClause.begin(), cnfClause.end());
+        }
+        return cnf;
+    }
+
+    int cnf_literal(int literal) const { return literal <= literalSize ? literal : -(literal - literalSize); }
 
 } Formula;
 
