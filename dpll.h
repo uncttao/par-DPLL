@@ -2,6 +2,8 @@
 #define PAR_DPLL_DPLL_H
 
 #include <unordered_set>
+#include "utils.h"
+#include "formula.h"
 
 using namespace std;
 
@@ -9,7 +11,10 @@ bool dpll() {
     return false;
 }
 
-void unit_propagation(int n, int u, unordered_set<int>* clausesOf, unordered_set<int>* literalsIn) {
+void unit_propagation(int n, int u, Formula& formula) {
+    auto clausesOf = formula.clausesOf;
+    auto literalsIn = formula.literalsIn;
+
     // remove every clause containing "u"
     for (auto& clauseOfU: clausesOf[u]) {
         for (auto& literal: literalsIn[clauseOfU]) {

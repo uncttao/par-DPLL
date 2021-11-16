@@ -1,7 +1,9 @@
 #include <iostream>
 #include "dpll.h"
+#include "tests/all.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    test_all();
+
     return 0;
 }

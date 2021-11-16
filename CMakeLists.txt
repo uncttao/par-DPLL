@@ -3,7 +3,7 @@ project(par_DPLL)
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(".")
+include_directories("." "tests")
 
 add_executable(par_DPLL main.cpp)
 
