@@ -6,6 +6,7 @@
 
 void test_all() {
     test_formula_convert_and_produce();
+    test_formula_convert();
 }
 
 #endif //PAR_DPLL_ALL_H
