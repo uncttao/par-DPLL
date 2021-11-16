@@ -3,4 +3,10 @@ project(par_DPLL)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include_directories(".")
+
 add_executable(par_DPLL main.cpp)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(par_DPLL PRIVATE -O3)
+endif (CMAKE_BUILD_TYPE STREQUAL "Release")
