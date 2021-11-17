@@ -54,14 +54,34 @@ void test_formula_convert() {
 
 void test_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
-    auto expected1 = vector<int>{-1};
-    auto pureLiterals1 = Formula::all_pure_literals(cnf1);
+    auto f1 = Formula(cnf1);
+    auto expected1 = vector<int>{5/*-1*/};
+    auto pureLiterals1 = f1.all_pure_literals();
     assert(equal(pureLiterals1->begin(), pureLiterals1->end(), expected1.begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
+    auto f2 = Formula(cnf2);
     auto expected2 = vector<int>{3};
-    auto pureLiterals2 = Formula::all_pure_literals(cnf2);
+    auto pureLiterals2 = f2.all_pure_literals();
     assert(equal(pureLiterals2->begin(), pureLiterals2->end(), expected2.begin()));
+}
+
+void test_pure_literal_elimination1() {
+    vector<vector<int>> cnf{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
+    auto f = Formula(cnf);
+    f.pure_literal_elimination();
+    vector<vector<int>> expected{vector<int>{-1, 2, 4}};
+    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
+}
+
+void test_pure_literal_elimination2() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f = Formula(cnf);
+    f.pure_literal_elimination();
+    vector<vector<int>> expected{vector<int>{-3, -2, 4}};
+    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
 }
 
 void test_formula() {
@@ -69,6 +89,8 @@ void test_formula() {
     test_formula_convert_and_produce2();
     test_formula_convert();
     test_pure_literals();
+    test_pure_literal_elimination1();
+    test_pure_literal_elimination2();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H

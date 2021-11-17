@@ -20,21 +20,23 @@ typedef struct Formula {
 
     ClauseStatus* clauseStatuses;
 
-    explicit Formula(vector<vector<int>>& cnf) {
+    vector<vector<int>>& the_cnf;
+
+    explicit Formula(vector<vector<int>>& cnf) : the_cnf(cnf) {
         numClauses = cnf.size();
         literalSize = literal_size(cnf);
 
         clausesOf = new Set[literalSize * 2 + 1];
         literalsIn = new Set[numClauses];
         clauseStatuses = (ClauseStatus*) calloc(numClauses, sizeof(ClauseStatus));
-        pureLiterals = all_pure_literals(cnf);
+        pureLiterals = all_pure_literals();
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
                 if (cnfLiteral == 0) {
-                    throw invalid_argument("CNF literal cannot be 0. Abort!");
+                    throw invalid_argument("CNF from_cnf_literal cannot be 0. Abort!");
                 }
-                auto literal = cnfLiteral < 0 ? (-cnfLiteral + literalSize) : cnfLiteral;
+                auto literal = from_cnf_literal(cnfLiteral);
                 literalsIn[clause].insert(literal);
                 clausesOf[literal].insert(clause);
             }
@@ -51,10 +53,18 @@ typedef struct Formula {
         return literals.size();
     }
 
-    static Set* all_pure_literals(vector<vector<int>>& cnf) {
+    Set* from_cnf_literals(Set& cnfLiterals) const {
+        Set* sCopy = new Set();
+        for (auto& item: cnfLiterals) {
+            sCopy->insert(from_cnf_literal(item));
+        }
+        return sCopy;
+    }
+
+    [[nodiscard]] Set* all_pure_literals() const {
         Set positives;
         Set negatives;
-        for (auto& clauseVec: cnf) {
+        for (auto& clauseVec: the_cnf) {
             for (auto& cnfLiteral: clauseVec) {
                 if (cnfLiteral == 0) {
                     throw invalid_argument("CNF literal cannot be 0. Abort!");
@@ -68,7 +78,7 @@ typedef struct Formula {
         }
         auto purePos = set_diff(positives, *set_neg(negatives));
         auto pureNeg = set_diff(negatives, *set_neg(positives));
-        return set_add(*purePos, *pureNeg);
+        return from_cnf_literals(*set_add(*purePos, *pureNeg));
     }
 
     [[nodiscard]] vector<vector<int>>* produce() const {
@@ -114,6 +124,10 @@ typedef struct Formula {
         return literal <= literalSize ? literal : -(literal - literalSize);
     }
 
+    [[nodiscard]] int from_cnf_literal(int cnfLiteral) const {
+        return cnfLiteral < 0 ? (-cnfLiteral + literalSize) : cnfLiteral;
+    }
+
     void unit_propagation(int u) const {
         // remove every clause containing "u"
         for (auto& clauseOfU: clausesOf[u]) {
@@ -129,10 +143,11 @@ typedef struct Formula {
         clausesOf[nu].clear();
     }
 
-    void pure_literal_elimination(int literal) const {
-        // remove every clause containing "literal"
-        for (auto& clause: clausesOf[literal]) {
-            clauseStatuses[clause] = Deleted;
+    void pure_literal_elimination() const {
+        for (auto& pure: *pureLiterals) {
+            for (auto& clause: clausesOf[pure]) {
+                clauseStatuses[clause] = Deleted;
+            }
         }
     }
 
