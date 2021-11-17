@@ -102,7 +102,7 @@ void test_unit_clauses3() {
     assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
 }
 
-void test_pure_literal_maintenance() {
+void test_pure_literal_maintenance1() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     auto pures = set_produce(*f1.pures);
@@ -110,6 +110,14 @@ void test_pure_literal_maintenance() {
     f1.delete_clause(1);
     pures = set_produce(*f1.pures);
     assert(equal(pures->begin(), pures->end(), (vector<int>{2, 3, 5/*-1*/, 8/*-4*/}).begin()));
+}
+
+void test_pure_literal_maintenance2() {
+    vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f1 = Formula(cnf1);
+    f1.delete_literal_from(8/*-4*/, 2);
+    auto pures = set_produce(*f1.pures);
+    assert(equal(pures->begin(), pures->end(), (vector<int>{4, 5/*-1*/}).begin()));
 }
 
 void test_formula() {
@@ -122,7 +130,8 @@ void test_formula() {
     test_unit_clauses1();
     test_unit_clauses2();
     test_unit_clauses3();
-    test_pure_literal_maintenance();
+    test_pure_literal_maintenance1();
+    test_pure_literal_maintenance2();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H
