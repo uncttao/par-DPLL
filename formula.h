@@ -149,6 +149,10 @@ typedef struct Formula {
         }
     }
 
+    [[nodiscard]] int num_of_active_clauses() const {
+        return numClauses - deletedClauses->size();
+    }
+
 } Formula;
 
 

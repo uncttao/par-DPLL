@@ -84,6 +84,14 @@ void test_pure_literal_elimination2() {
     assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
 }
 
+void test_num_of_active_clauses() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f = Formula(cnf);
+    assert(f.num_of_active_clauses() == 3);
+    f.pure_literal_elimination();
+    assert(f.num_of_active_clauses() == 1);
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
@@ -91,6 +99,7 @@ void test_formula() {
     test_pure_literals();
     test_pure_literal_elimination1();
     test_pure_literal_elimination2();
+    test_num_of_active_clauses();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H
