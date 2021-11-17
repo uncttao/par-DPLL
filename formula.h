@@ -17,6 +17,7 @@ typedef struct Formula {
     Set* deletedClauses;
 
     Set* emptyClauses;
+    Set* unitClauses;
 
     vector<vector<int>>& the_cnf;
 
@@ -28,7 +29,10 @@ typedef struct Formula {
         literalsIn = new Set[numClauses];
         deletedClauses = new Set[numClauses];
         emptyClauses = new Set[numClauses];
-        pureLiterals = all_pure_literals();
+
+        unitClauses = all_initial_unit_clauses();
+
+        pureLiterals = all_initial_pure_literals();
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
@@ -60,7 +64,18 @@ typedef struct Formula {
         return sCopy;
     }
 
-    [[nodiscard]] Set* all_pure_literals() const {
+    Set* all_initial_unit_clauses() {
+        auto allUnitClauses = new Set();
+        for (auto c = 0; c < numClauses; c++) {
+            auto clauseVec = the_cnf[c];
+            if (clauseVec.size() == 1) {
+                allUnitClauses->insert(c);
+            }
+        }
+        return allUnitClauses;
+    };
+
+    [[nodiscard]] Set* all_initial_pure_literals() const {
         Set positives;
         Set negatives;
         for (auto& clauseVec: the_cnf) {
@@ -133,6 +148,7 @@ typedef struct Formula {
         // remove every clause containing "u"
         for (auto& clauseOfU: clausesOf[u]) {
             deletedClauses->insert(clauseOfU);
+            unitClauses->erase(clauseOfU);
         }
 
         // remove every "~u" from every clause
@@ -149,6 +165,11 @@ typedef struct Formula {
             // report any empty clause
             if (literalsInClauseOfNu.empty()) {
                 emptyClauses->insert(clauseOfNu);
+                unitClauses->erase(clauseOfNu);
+            }
+            // report any unit clause
+            if (literalsInClauseOfNu.size() == 1) {
+                unitClauses->insert(clauseOfNu);
             }
         }
         clausesOf[nu].clear();
@@ -158,6 +179,7 @@ typedef struct Formula {
         for (auto& pure: *pureLiterals) {
             for (auto& clause: clausesOf[pure]) {
                 deletedClauses->insert(clause);
+                unitClauses->erase(clause);
             }
         }
     }

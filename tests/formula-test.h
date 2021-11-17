@@ -56,13 +56,13 @@ void test_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     auto expected1 = vector<int>{5/*-1*/};
-    auto pureLiterals1 = f1.all_pure_literals();
+    auto pureLiterals1 = f1.all_initial_pure_literals();
     assert(equal(pureLiterals1->begin(), pureLiterals1->end(), expected1.begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
     auto f2 = Formula(cnf2);
     auto expected2 = vector<int>{3};
-    auto pureLiterals2 = f2.all_pure_literals();
+    auto pureLiterals2 = f2.all_initial_pure_literals();
     assert(equal(pureLiterals2->begin(), pureLiterals2->end(), expected2.begin()));
 }
 
@@ -108,6 +108,26 @@ void test_empty_clause2() {
     assert(equal(f.emptyClauses->begin(), f.emptyClauses->end(), expected.begin()));
 }
 
+void test_unit_clauses1() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
+    auto f = Formula(cnf);
+    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1, 3}).begin()));
+}
+
+void test_unit_clauses2() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
+    auto f = Formula(cnf);
+    f.unit_propagation(1);
+    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
+}
+
+void test_unit_clauses3() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
+    auto f = Formula(cnf);
+    f.unit_propagation(5/*-1*/);
+    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
@@ -118,6 +138,9 @@ void test_formula() {
     test_num_of_active_clauses();
     test_empty_clause1();
     test_empty_clause2();
+    test_unit_clauses1();
+    test_unit_clauses2();
+    test_unit_clauses3();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H
