@@ -162,6 +162,7 @@ typedef struct Formula {
     void delete_clause(int clause) const {
         deletedClauses->insert(clause);
         unitClauses->erase(clause);
+        emptyClauses->erase(clause);
 
         // remove all literals from clause
         for (auto& literal: literalsIn[clause]) {
