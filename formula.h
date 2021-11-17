@@ -145,9 +145,9 @@ typedef struct Formula {
 
     void unit_propagation(int u) const {
         // remove every clause containing "u"
-        for (auto& clauseOfU: clausesOf[u]) {
-            deletedClauses->insert(clauseOfU);
-            unitClauses->erase(clauseOfU);
+        auto clausesOfU = clausesOf[u];   // need to make a copy first
+        for (auto& clauseOfU: clausesOfU) {
+            delete_clause(clauseOfU);
         }
 
         // remove every "~u" from every clause
@@ -157,6 +157,16 @@ typedef struct Formula {
         for (auto& clauseOfNu: clausesOfNu) {
             delete_literal_from(nu, clauseOfNu);
         }
+    }
+
+    void delete_clause(int clause) const {
+        deletedClauses->insert(clause);
+        unitClauses->erase(clause);
+
+        for (auto& literal: literalsIn[clause]) {
+            clausesOf[literal].erase(clause);
+        }
+        literalsIn[clause].clear();
     }
 
     void delete_literal_from(int literal, int clause) const {
