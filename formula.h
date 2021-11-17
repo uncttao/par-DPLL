@@ -12,8 +12,6 @@ typedef struct Formula {
     Set* clausesOf;
     Set* literalsIn;
 
-    Set* pureLiterals;
-
     Set* deletedClauses;
 
     Set* emptyClauses;
@@ -31,8 +29,6 @@ typedef struct Formula {
         emptyClauses = new Set[numClauses];
 
         unitClauses = all_initial_unit_clauses();
-
-        pureLiterals = all_initial_pure_literals();
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
@@ -173,15 +169,6 @@ typedef struct Formula {
             }
         }
         clausesOf[nu].clear();
-    }
-
-    void pure_literal_elimination() const {
-        for (auto& pure: *pureLiterals) {
-            for (auto& clause: clausesOf[pure]) {
-                deletedClauses->insert(clause);
-                unitClauses->erase(clause);
-            }
-        }
     }
 
     [[nodiscard]] int num_of_active_clauses() const {

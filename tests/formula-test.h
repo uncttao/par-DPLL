@@ -66,32 +66,6 @@ void test_pure_literals() {
     assert(equal(pureLiterals2->begin(), pureLiterals2->end(), expected2.begin()));
 }
 
-void test_pure_literal_elimination1() {
-    vector<vector<int>> cnf{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
-    auto f = Formula(cnf);
-    f.pure_literal_elimination();
-    vector<vector<int>> expected{vector<int>{-1, 2, 4}};
-    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
-    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
-}
-
-void test_pure_literal_elimination2() {
-    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
-    auto f = Formula(cnf);
-    f.pure_literal_elimination();
-    vector<vector<int>> expected{vector<int>{-3, -2, 4}};
-    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
-    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
-}
-
-void test_num_of_active_clauses() {
-    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
-    auto f = Formula(cnf);
-    assert(f.num_of_active_clauses() == 3);
-    f.pure_literal_elimination();
-    assert(f.num_of_active_clauses() == 1);
-}
-
 void test_empty_clause1() {
     vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}};
     auto f = Formula(cnf);
@@ -133,9 +107,6 @@ void test_formula() {
     test_formula_convert_and_produce2();
     test_formula_convert();
     test_pure_literals();
-    test_pure_literal_elimination1();
-    test_pure_literal_elimination2();
-    test_num_of_active_clauses();
     test_empty_clause1();
     test_empty_clause2();
     test_unit_clauses1();
