@@ -16,14 +16,29 @@ typedef struct Formula {
     Set* clausesOf;
     Set* literalsIn;
 
+    Set* pureLiterals;
+
     ClauseStatus* clauseStatuses;
 
-    Formula(int nClauses, int lSize) {
-        numClauses = nClauses;
-        literalSize = lSize;
-        clausesOf = new Set[lSize * 2 + 1];
-        literalsIn = new Set[nClauses];
-        clauseStatuses = (ClauseStatus*) calloc(nClauses, sizeof(ClauseStatus));
+    explicit Formula(vector<vector<int>>& cnf) {
+        numClauses = cnf.size();
+        literalSize = literal_size(cnf);
+
+        clausesOf = new Set[literalSize * 2 + 1];
+        literalsIn = new Set[numClauses];
+        clauseStatuses = (ClauseStatus*) calloc(numClauses, sizeof(ClauseStatus));
+        pureLiterals = all_pure_literals(cnf);
+
+        for (auto clause = 0; clause < numClauses; clause++) {
+            for (auto& cnfLiteral: cnf[clause]) {
+                if (cnfLiteral == 0) {
+                    throw invalid_argument("CNF literal cannot be 0. Abort!");
+                }
+                auto literal = cnfLiteral < 0 ? (-cnfLiteral + literalSize) : cnfLiteral;
+                literalsIn[clause].insert(literal);
+                clausesOf[literal].insert(clause);
+            }
+        }
     }
 
     static int literal_size(vector<vector<int>>& cnf) {
@@ -54,26 +69,6 @@ typedef struct Formula {
         auto purePos = set_diff(positives, *set_neg(negatives));
         auto pureNeg = set_diff(negatives, *set_neg(positives));
         return set_add(*purePos, *pureNeg);
-    }
-
-    static Formula* convert(vector<vector<int>>& cnf) {
-        auto numClauses = cnf.size();
-        auto literalSize = literal_size(cnf);
-
-        auto f = new Formula(numClauses, literalSize);
-
-        for (auto clause = 0; clause < numClauses; clause++) {
-            for (auto& cnfLiteral: cnf[clause]) {
-                if (cnfLiteral == 0) {
-                    throw invalid_argument("CNF literal cannot be 0. Abort!");
-                }
-                auto literal = cnfLiteral < 0 ? (-cnfLiteral + literalSize) : cnfLiteral;
-                f->literalsIn[clause].insert(literal);
-                f->clausesOf[literal].insert(clause);
-            }
-        }
-
-        return f;
     }
 
     [[nodiscard]] vector<vector<int>>* produce() const {
@@ -132,6 +127,13 @@ typedef struct Formula {
             literalsIn[clauseOfNu].erase(nu);
         }
         clausesOf[nu].clear();
+    }
+
+    void pure_literal_elimination(int literal) const {
+        // remove every clause containing "literal"
+        for (auto& clause: clausesOf[literal]) {
+            clauseStatuses[clause] = Deleted;
+        }
     }
 
 } Formula;
