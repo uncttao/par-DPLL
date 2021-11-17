@@ -16,6 +16,8 @@ typedef struct Formula {
 
     Set* deletedClauses;
 
+    Set* emptyClauses;
+
     vector<vector<int>>& the_cnf;
 
     explicit Formula(vector<vector<int>>& cnf) : the_cnf(cnf) {
@@ -25,6 +27,7 @@ typedef struct Formula {
         clausesOf = new Set[literalSize * 2 + 1];
         literalsIn = new Set[numClauses];
         deletedClauses = new Set[numClauses];
+        emptyClauses = new Set[numClauses];
         pureLiterals = all_pure_literals();
 
         for (auto clause = 0; clause < numClauses; clause++) {
@@ -136,7 +139,17 @@ typedef struct Formula {
         auto n = literalSize;
         auto nu = u < n ? u + n : u - n;
         for (auto& clauseOfNu: clausesOf[nu]) {
-            literalsIn[clauseOfNu].erase(nu);
+            if (deletedClauses->contains(clauseOfNu)) {
+                continue;
+            }
+
+            auto& literalsInClauseOfNu = literalsIn[clauseOfNu];
+            literalsInClauseOfNu.erase(nu);
+
+            // report any empty clause
+            if (literalsInClauseOfNu.empty()) {
+                emptyClauses->insert(clauseOfNu);
+            }
         }
         clausesOf[nu].clear();
     }
