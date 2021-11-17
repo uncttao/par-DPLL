@@ -132,14 +132,15 @@ typedef struct Formula {
         literalsIn[clause].erase(literal);
         clausesOf[literal].erase(clause);
 
+        // report any unit clause
+        if (literalsIn[clause].size() == 1) {
+            unitClauses->insert(clause);
+            return;
+        }
         // report any empty clause
         if (literalsIn[clause].empty()) {
             emptyClauses->insert(clause);
             unitClauses->erase(clause);
-        }
-        // report any unit clause
-        if (literalsIn[clause].size() == 1) {
-            unitClauses->insert(clause);
         }
     }
 
