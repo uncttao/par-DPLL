@@ -122,18 +122,15 @@ typedef struct Formula {
         // remove every "~u" from every clause
         auto nu = u < literalSize ? u + literalSize : u - literalSize;
 
-        for (auto& clauseOfNu: clausesOf[nu]) {
+        auto clausesOfNu = clausesOf[nu];   // need to make a copy first
+        for (auto& clauseOfNu: clausesOfNu) {
             delete_literal_from(nu, clauseOfNu);
         }
-        clausesOf[nu].clear();
     }
 
     void delete_literal_from(int literal, int clause) const {
-        if (deletedClauses->contains(clause)) {
-            return;
-        }
-
         literalsIn[clause].erase(literal);
+        clausesOf[literal].erase(clause);
 
         // report any empty clause
         if (literalsIn[clause].empty()) {
