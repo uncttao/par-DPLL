@@ -151,11 +151,31 @@ typedef struct Formula {
         }
 
         // remove every "~u" from every clause
-        auto nu = u < literalSize ? u + literalSize : u - literalSize;
+        auto nu = neg_literal(u);
 
         auto clausesOfNu = clausesOf[nu];   // need to make a copy first
         for (auto& clauseOfNu: clausesOfNu) {
             delete_literal_from(nu, clauseOfNu);
+        }
+    }
+
+    [[nodiscard]] int neg_literal(int u) const {
+        return u <= literalSize ? u + literalSize : u - literalSize;
+    }
+
+    void update_pure(int literal) const {
+        int nLiteral = neg_literal(literal);
+
+        if (clausesOf[literal].empty()) {
+            pures->erase(literal);
+
+            if (!clausesOf[nLiteral].empty()) {
+                pures->insert(nLiteral);
+            }
+        } else {
+            if (clausesOf[nLiteral].empty()) {
+                pures->insert(literal);
+            }
         }
     }
 
@@ -167,6 +187,7 @@ typedef struct Formula {
         // remove all literals from clause
         for (auto& literal: literalsIn[clause]) {
             clausesOf[literal].erase(clause);
+            update_pure(literal);
         }
 
         // clear the clause
@@ -176,6 +197,7 @@ typedef struct Formula {
     void delete_literal_from(int literal, int clause) const {
         literalsIn[clause].erase(literal);
         clausesOf[literal].erase(clause);
+        update_pure(literal);
 
         // report any unit clause
         if (literalsIn[clause].size() == 1) {

@@ -52,7 +52,7 @@ void test_formula_convert() {
     }
 }
 
-void test_pure_literals() {
+void test_initial_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     auto expected1 = vector<int>{5/*-1*/};
@@ -102,16 +102,27 @@ void test_unit_clauses3() {
     assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
 }
 
+void test_pure_literal_maintenance() {
+    vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f1 = Formula(cnf1);
+    auto pures = set_produce(*f1.pures);
+    assert(equal(pures->begin(), pures->end(), (vector<int>{5/*-1*/}).begin()));
+    f1.delete_clause(1);
+    pures = set_produce(*f1.pures);
+    assert(equal(pures->begin(), pures->end(), (vector<int>{2, 3, 5/*-1*/, 8/*-4*/}).begin()));
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
     test_formula_convert();
-    test_pure_literals();
+    test_initial_pure_literals();
     test_empty_clause1();
     test_empty_clause2();
     test_unit_clauses1();
     test_unit_clauses2();
     test_unit_clauses3();
+    test_pure_literal_maintenance();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H

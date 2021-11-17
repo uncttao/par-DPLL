@@ -34,6 +34,15 @@ Set* set_neg(Set& s) {
     return sCopy;
 }
 
+vector<int>* set_produce(Set& s) {
+    auto vec = new vector<int>();
+    for (auto& item: s) {
+        vec->push_back(item);
+    }
+    sort(vec->begin(), vec->end());
+    return vec;
+}
+
 void print_cnf(vector<vector<int>>& cnf) {
     for (auto& cnfClause: cnf) {
         for (auto& cnfLiteral: cnfClause) {
