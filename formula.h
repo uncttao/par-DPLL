@@ -148,27 +148,30 @@ typedef struct Formula {
         }
 
         // remove every "~u" from every clause
-        auto n = literalSize;
-        auto nu = u < n ? u + n : u - n;
+        auto nu = u < literalSize ? u + literalSize : u - literalSize;
+
         for (auto& clauseOfNu: clausesOf[nu]) {
-            if (deletedClauses->contains(clauseOfNu)) {
-                continue;
-            }
-
-            auto& literalsInClauseOfNu = literalsIn[clauseOfNu];
-            literalsInClauseOfNu.erase(nu);
-
-            // report any empty clause
-            if (literalsInClauseOfNu.empty()) {
-                emptyClauses->insert(clauseOfNu);
-                unitClauses->erase(clauseOfNu);
-            }
-            // report any unit clause
-            if (literalsInClauseOfNu.size() == 1) {
-                unitClauses->insert(clauseOfNu);
-            }
+            delete_literal_from(nu, clauseOfNu);
         }
         clausesOf[nu].clear();
+    }
+
+    void delete_literal_from(int literal, int clause) const {
+        if (deletedClauses->contains(clause)) {
+            return;
+        }
+
+        literalsIn[clause].erase(literal);
+
+        // report any empty clause
+        if (literalsIn[clause].empty()) {
+            emptyClauses->insert(clause);
+            unitClauses->erase(clause);
+        }
+        // report any unit clause
+        if (literalsIn[clause].size() == 1) {
+            unitClauses->insert(clause);
+        }
     }
 
     [[nodiscard]] int num_of_active_clauses() const {
