@@ -52,14 +52,6 @@ typedef struct Formula {
         return literals.size();
     }
 
-    Set* from_cnf_literals(Set& cnfLiterals) const {
-        Set* sCopy = new Set();
-        for (auto& item: cnfLiterals) {
-            sCopy->insert(from_cnf_literal(item));
-        }
-        return sCopy;
-    }
-
     Set* all_initial_unit_clauses() {
         auto allUnitClauses = new Set();
         for (auto c = 0; c < numClauses; c++) {
@@ -70,26 +62,6 @@ typedef struct Formula {
         }
         return allUnitClauses;
     };
-
-    [[nodiscard]] Set* all_initial_pure_literals() const {
-        Set positives;
-        Set negatives;
-        for (auto& clauseVec: the_cnf) {
-            for (auto& cnfLiteral: clauseVec) {
-                if (cnfLiteral == 0) {
-                    throw invalid_argument("CNF literal cannot be 0. Abort!");
-                }
-                if (cnfLiteral > 0) {
-                    positives.insert(cnfLiteral);
-                } else {
-                    negatives.insert(cnfLiteral);
-                }
-            }
-        }
-        auto purePos = set_diff(positives, *set_neg(negatives));
-        auto pureNeg = set_diff(negatives, *set_neg(positives));
-        return from_cnf_literals(*set_add(*purePos, *pureNeg));
-    }
 
     [[nodiscard]] vector<vector<int>>* produce() const {
         auto cnf = new vector<vector<int>>();
