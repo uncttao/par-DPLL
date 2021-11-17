@@ -92,11 +92,19 @@ void test_num_of_active_clauses() {
     assert(f.num_of_active_clauses() == 1);
 }
 
-void test_empty_clause() {
+void test_empty_clause1() {
     vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}};
     auto f = Formula(cnf);
     f.unit_propagation(2);
     Set expected{1};
+    assert(equal(f.emptyClauses->begin(), f.emptyClauses->end(), expected.begin()));
+}
+
+void test_empty_clause2() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-4, -1, 2}, vector<int>{-2}};
+    auto f = Formula(cnf);
+    f.unit_propagation(2);
+    Set expected{2};
     assert(equal(f.emptyClauses->begin(), f.emptyClauses->end(), expected.begin()));
 }
 
@@ -108,7 +116,8 @@ void test_formula() {
     test_pure_literal_elimination1();
     test_pure_literal_elimination2();
     test_num_of_active_clauses();
-    test_empty_clause();
+    test_empty_clause1();
+    test_empty_clause2();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H
