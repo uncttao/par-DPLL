@@ -52,10 +52,23 @@ void test_formula_convert() {
     }
 }
 
+void test_pure_literals() {
+    vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto expected1 = vector<int>{-1};
+    auto pureLiterals1 = Formula::all_pure_literals(cnf1);
+    assert(equal(pureLiterals1->begin(), pureLiterals1->end(), expected1.begin()));
+
+    vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
+    auto expected2 = vector<int>{3};
+    auto pureLiterals2 = Formula::all_pure_literals(cnf2);
+    assert(equal(pureLiterals2->begin(), pureLiterals2->end(), expected2.begin()));
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
     test_formula_convert();
+    test_pure_literals();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H

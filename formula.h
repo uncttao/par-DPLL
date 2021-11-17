@@ -36,6 +36,26 @@ typedef struct Formula {
         return literals.size();
     }
 
+    static Set* all_pure_literals(vector<vector<int>>& cnf) {
+        Set positives;
+        Set negatives;
+        for (auto& clauseVec: cnf) {
+            for (auto& cnfLiteral: clauseVec) {
+                if (cnfLiteral == 0) {
+                    throw invalid_argument("CNF literal cannot be 0. Abort!");
+                }
+                if (cnfLiteral > 0) {
+                    positives.insert(cnfLiteral);
+                } else {
+                    negatives.insert(cnfLiteral);
+                }
+            }
+        }
+        auto purePos = set_diff(positives, *set_neg(negatives));
+        auto pureNeg = set_diff(negatives, *set_neg(positives));
+        return set_add(*purePos, *pureNeg);
+    }
+
     static Formula* convert(vector<vector<int>>& cnf) {
         auto numClauses = cnf.size();
         auto literalSize = literal_size(cnf);
