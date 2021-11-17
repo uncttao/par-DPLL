@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <cmath>
 
 enum ClauseStatus {
     Present, Deleted
@@ -28,8 +29,8 @@ typedef struct Formula {
     static int literal_size(vector<vector<int>>& cnf) {
         Set literals;
         for (auto& clauseVec: cnf) {
-            for (auto& literal: clauseVec) {
-                literals.insert(literal < 0 ? -literal : literal);
+            for (auto& cnfLiteral: clauseVec) {
+                literals.insert(abs(cnfLiteral));
             }
         }
         return literals.size();
