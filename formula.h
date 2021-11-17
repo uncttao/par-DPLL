@@ -5,10 +5,6 @@
 #include <cstdlib>
 #include <cmath>
 
-enum ClauseStatus {
-    Present, Deleted
-};
-
 typedef struct Formula {
     int numClauses;
     int literalSize;
@@ -18,7 +14,7 @@ typedef struct Formula {
 
     Set* pureLiterals;
 
-    ClauseStatus* clauseStatuses;
+    Set* deletedClauses;
 
     vector<vector<int>>& the_cnf;
 
@@ -28,7 +24,7 @@ typedef struct Formula {
 
         clausesOf = new Set[literalSize * 2 + 1];
         literalsIn = new Set[numClauses];
-        clauseStatuses = (ClauseStatus*) calloc(numClauses, sizeof(ClauseStatus));
+        deletedClauses = new Set[numClauses];
         pureLiterals = all_pure_literals();
 
         for (auto clause = 0; clause < numClauses; clause++) {
@@ -84,7 +80,7 @@ typedef struct Formula {
     [[nodiscard]] vector<vector<int>>* produce() const {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
-            if (clauseStatuses[c] == Deleted) {
+            if (deletedClauses->contains(c)) {
                 continue;
             }
 
@@ -112,10 +108,12 @@ typedef struct Formula {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
             auto& cnfClause = _cnf->at(c);
-            if (clauseStatuses[c] == Present) {
-                cnf->push_back(cnfClause);
-                sort(cnf->back().begin(), cnf->back().end());
+            if (deletedClauses->contains(c)) {
+                continue;
             }
+
+            cnf->push_back(cnfClause);
+            sort(cnf->back().begin(), cnf->back().end());
         }
         return cnf;
     }
@@ -131,7 +129,7 @@ typedef struct Formula {
     void unit_propagation(int u) const {
         // remove every clause containing "u"
         for (auto& clauseOfU: clausesOf[u]) {
-            clauseStatuses[clauseOfU] = Deleted;
+            deletedClauses->insert(clauseOfU);
         }
 
         // remove every "~u" from every clause
@@ -146,7 +144,7 @@ typedef struct Formula {
     void pure_literal_elimination() const {
         for (auto& pure: *pureLiterals) {
             for (auto& clause: clausesOf[pure]) {
-                clauseStatuses[clause] = Deleted;
+                deletedClauses->insert(clause);
             }
         }
     }
