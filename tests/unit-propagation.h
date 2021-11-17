@@ -54,12 +54,22 @@ void test_unit_propagation5() {
     assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
 }
 
+void test_unit_propagation6() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}};
+    auto f = Formula(cnf);
+    f.unit_propagation(2);
+    vector<vector<int>> expected{vector<int>{}};
+    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
+}
+
 void test_unit_propagation() {
     test_unit_propagation1();
     test_unit_propagation2();
     test_unit_propagation3();
     test_unit_propagation4();
     test_unit_propagation5();
+    test_unit_propagation6();
 }
 
 #endif //PAR_DPLL_UNIT_PROPAGATION_H
