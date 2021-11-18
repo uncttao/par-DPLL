@@ -183,20 +183,26 @@ typedef struct Formula {
         int nLiteral = neg_literal(literal);
 
         if (clausesOf[literal].empty()) {
-            pureLiterals->erase(literal);
-
-            if (!clausesOf[nLiteral].empty()) {
+            if (clausesOf[nLiteral].empty()) {
+                pureLiterals->erase(literal);
+                pureLiterals->erase(nLiteral);
+            } else {
                 pureLiterals->insert(nLiteral);
             }
         } else {
             if (clausesOf[nLiteral].empty()) {
                 pureLiterals->insert(literal);
+            } else {
+                pureLiterals->erase(literal);
+                pureLiterals->erase(nLiteral);
             }
         }
 
         // maintain allLiterals
         if (clausesOf[literal].empty()) {
             allLiterals->erase(literal);
+        } else {
+            allLiterals->insert(literal);
         }
     }
 
@@ -230,6 +236,17 @@ typedef struct Formula {
             emptyClauses->insert(clause);
             unitClauses->erase(clause);
         }
+    }
+
+    void add_unit_clause(int literal) {
+        auto newClause = numClauses++;
+        literalsIn.resize(numClauses);
+        literalsIn[newClause].insert(literal);
+        clausesOf[literal].insert(newClause);
+
+        unitClauses->insert(newClause);
+
+        on_literal_change(literal);
     }
 
     [[nodiscard]] int num_of_active_clauses() const {

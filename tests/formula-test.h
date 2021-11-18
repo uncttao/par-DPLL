@@ -55,15 +55,13 @@ void test_formula_convert() {
 void test_initial_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    auto expected1 = vector<int>{5/*-1*/};
     auto pureLiterals1 = f1.all_initial_pure_literals();
-    assert(equal(pureLiterals1->begin(), pureLiterals1->end(), expected1.begin()));
+    assert(equal(pureLiterals1->begin(), pureLiterals1->end(), (vector<int>{5/*-1*/}).begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
     auto f2 = Formula(cnf2);
-    auto expected2 = vector<int>{3};
     auto pureLiterals2 = f2.all_initial_pure_literals();
-    assert(equal(pureLiterals2->begin(), pureLiterals2->end(), expected2.begin()));
+    assert(equal(pureLiterals2->begin(), pureLiterals2->end(), (vector<int>{3}).begin()));
 }
 
 void test_empty_clause1() {
@@ -172,6 +170,27 @@ void test_is_all_pure_literals() {
     assert(f1.is_all_pure_literals());
 }
 
+void test_add_unit_clause() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f = Formula(cnf);
+    f.add_unit_clause(3);
+    vector<vector<int>> expected{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}, vector<int>{3}};
+    assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
+    assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
+    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {3}).begin()));
+
+    f.add_unit_clause(5/*-1*/);
+    vector<vector<int>> expected2{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}, vector<int>{3},
+                                  vector<int>{-1}};
+    assert(equal(expected2.begin(), expected2.end(), f.produce()->begin()));
+    assert(equal(expected2.begin(), expected2.end(), f.produce2()->begin()));
+    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {3, 4}).begin()));
+
+    assert(equal(f.pureLiterals->begin(), f.pureLiterals->end(), (vector<int>{5/*-1*/}).begin()));
+    f.add_unit_clause(1);
+    assert(equal(f.pureLiterals->begin(), f.pureLiterals->end(), (vector<int>{}).begin()));
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
@@ -187,6 +206,7 @@ void test_formula() {
     test_all_initial_literals();
     test_all_literals_maintenance();
     test_is_all_pure_literals();
+    test_add_unit_clause();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H
