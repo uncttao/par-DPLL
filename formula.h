@@ -236,6 +236,10 @@ typedef struct Formula {
         return numClauses - deletedClauses->size();
     }
 
+    [[nodiscard]] bool is_all_pure_literals() const {
+        return pureLiterals->size() >= allLiterals->size();
+    }
+
 } Formula;
 
 
