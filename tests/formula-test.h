@@ -134,6 +134,30 @@ void test_all_initial_literals() {
                  (vector<int>{1, 2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
 }
 
+void test_all_literals_maintenance() {
+    vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f1 = Formula(cnf1);
+    f1.delete_literal_from(7/*-3*/, 1);
+    auto allLiterals1 = set_produce(*f1.allLiterals);
+    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+                 (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
+
+    f1.delete_clause(2);
+    allLiterals1 = set_produce(*f1.allLiterals);
+    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+                 (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/}).begin()));
+
+    f1.delete_literal_from(4, 1);
+    allLiterals1 = set_produce(*f1.allLiterals);
+    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+                 (vector<int>{2, 3, 5/*-1*/, 6/*-2*/}).begin()));
+
+    f1.delete_clause(0);
+    allLiterals1 = set_produce(*f1.allLiterals);
+    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+                 (vector<int>{6/*-2*/}).begin()));
+}
+
 void test_formula() {
     test_formula_convert_and_produce();
     test_formula_convert_and_produce2();
@@ -147,6 +171,7 @@ void test_formula() {
     test_pure_literal_maintenance1();
     test_pure_literal_maintenance2();
     test_all_initial_literals();
+    test_all_literals_maintenance();
 }
 
 #endif //PAR_DPLL_FORMULA_TEST_H

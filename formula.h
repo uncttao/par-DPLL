@@ -178,7 +178,8 @@ typedef struct Formula {
         return u <= literalSize ? u + literalSize : u - literalSize;
     }
 
-    void update_pure(int literal) const {
+    void on_literal_change(int literal) const {
+        // maintain pureLiterals
         int nLiteral = neg_literal(literal);
 
         if (clausesOf[literal].empty()) {
@@ -192,6 +193,11 @@ typedef struct Formula {
                 pureLiterals->insert(literal);
             }
         }
+
+        // maintain allLiterals
+        if (clausesOf[literal].empty()) {
+            allLiterals->erase(literal);
+        }
     }
 
     void delete_clause(int clause) const {
@@ -202,7 +208,7 @@ typedef struct Formula {
         // remove all literals from clause
         for (auto& literal: literalsIn[clause]) {
             clausesOf[literal].erase(clause);
-            update_pure(literal);
+            on_literal_change(literal);
         }
 
         // clear the clause
@@ -212,7 +218,7 @@ typedef struct Formula {
     void delete_literal_from(int literal, int clause) const {
         literalsIn[clause].erase(literal);
         clausesOf[literal].erase(clause);
-        update_pure(literal);
+        on_literal_change(literal);
 
         // report any unit clause
         if (literalsIn[clause].size() == 1) {
