@@ -10,7 +10,7 @@ typedef struct Formula {
     int literalSize;
 
     Set* clausesOf;
-    Set* literalsIn;
+    vector<Set > literalsIn;
 
     Set* allLiterals;
     Set* pureLiterals;
@@ -27,7 +27,7 @@ typedef struct Formula {
         literalSize = literal_size(cnf);
 
         clausesOf = new Set[literalSize * 2 + 1];
-        literalsIn = new Set[numClauses];
+        literalsIn.resize(numClauses);
         deletedClauses = new Set[numClauses];
         emptyClauses = new Set[numClauses];
 
@@ -158,7 +158,7 @@ typedef struct Formula {
         return cnfLiteral < 0 ? (-cnfLiteral + literalSize) : cnfLiteral;
     }
 
-    void unit_propagation(int u) const {
+    void unit_propagation(int u) {
         // remove every clause containing "u"
         auto clausesOfU = clausesOf[u];   // need to make a copy first
         for (auto& clauseOfU: clausesOfU) {
@@ -200,7 +200,7 @@ typedef struct Formula {
         }
     }
 
-    void delete_clause(int clause) const {
+    void delete_clause(int clause) {
         deletedClauses->insert(clause);
         unitClauses->erase(clause);
         emptyClauses->erase(clause);
@@ -215,7 +215,7 @@ typedef struct Formula {
         literalsIn[clause].clear();
     }
 
-    void delete_literal_from(int literal, int clause) const {
+    void delete_literal_from(int literal, int clause) {
         literalsIn[clause].erase(literal);
         clausesOf[literal].erase(clause);
         on_literal_change(literal);
