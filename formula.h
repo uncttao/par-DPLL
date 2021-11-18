@@ -12,7 +12,7 @@ typedef struct Formula {
     Set* clausesOf;
     Set* literalsIn;
 
-    Set* pures;
+    Set* pureLiterals;
 
     Set* deletedClauses;
 
@@ -30,7 +30,7 @@ typedef struct Formula {
         deletedClauses = new Set[numClauses];
         emptyClauses = new Set[numClauses];
 
-        pures = all_initial_pure_literals();
+        pureLiterals = all_initial_pure_literals();
         unitClauses = all_initial_unit_clauses();
 
         for (auto clause = 0; clause < numClauses; clause++) {
@@ -167,14 +167,14 @@ typedef struct Formula {
         int nLiteral = neg_literal(literal);
 
         if (clausesOf[literal].empty()) {
-            pures->erase(literal);
+            pureLiterals->erase(literal);
 
             if (!clausesOf[nLiteral].empty()) {
-                pures->insert(nLiteral);
+                pureLiterals->insert(nLiteral);
             }
         } else {
             if (clausesOf[nLiteral].empty()) {
-                pures->insert(literal);
+                pureLiterals->insert(literal);
             }
         }
     }
