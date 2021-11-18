@@ -12,6 +12,7 @@ typedef struct Formula {
     Set* clausesOf;
     Set* literalsIn;
 
+    Set* allLiterals;
     Set* pureLiterals;
 
     Set* deletedClauses;
@@ -30,6 +31,7 @@ typedef struct Formula {
         deletedClauses = new Set[numClauses];
         emptyClauses = new Set[numClauses];
 
+        allLiterals = all_initial_literals();
         pureLiterals = all_initial_pure_literals();
         unitClauses = all_initial_unit_clauses();
 
@@ -73,6 +75,19 @@ typedef struct Formula {
         }
         return allUnitClauses;
     };
+
+    [[nodiscard]] Set* all_initial_literals() const {
+        auto allInitialLiterals = new Set();
+        for (auto& clauseVec: the_cnf) {
+            for (auto& cnfLiteral: clauseVec) {
+                if (cnfLiteral == 0) {
+                    throw invalid_argument("CNF literal cannot be 0. Abort!");
+                }
+                allInitialLiterals->insert(from_cnf_literal(cnfLiteral));
+            }
+        }
+        return allInitialLiterals;
+    }
 
     [[nodiscard]] Set* all_initial_pure_literals() const {
         Set positives;
