@@ -9,15 +9,15 @@ typedef struct Formula {
     int numClauses;
     int literalSize;
 
-    Set* clausesOf;
+    vector<Set > clausesOf;
     vector<Set > literalsIn;
 
-    Set* allLiterals;
-    Set* pureLiterals;
+    Set allLiterals;
+    Set pureLiterals;
 
-    Set* deletedClauses;
-    Set* emptyClauses;
-    Set* unitClauses;
+    Set deletedClauses;
+    Set emptyClauses;
+    Set unitClauses;
 
     vector<vector<int>>& the_cnf;
 
@@ -25,14 +25,13 @@ typedef struct Formula {
         numClauses = cnf.size();
         literalSize = literal_size(cnf);
 
-        clausesOf = new Set[literalSize * 2 + 1];
+        clausesOf.resize(literalSize * 2 + 1);
         literalsIn.resize(numClauses);
-        deletedClauses = new Set();
 
-        allLiterals = all_initial_literals();
-        pureLiterals = all_initial_pure_literals();
-        unitClauses = all_initial_unit_clauses();
-        emptyClauses = all_initial_empty_clauses();
+        all_initial_literals();
+        all_initial_pure_literals();
+        all_initial_unit_clauses();
+        all_initial_empty_clauses();
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
@@ -64,42 +63,36 @@ typedef struct Formula {
         return sCopy;
     }
 
-    Set* all_initial_unit_clauses() {
-        auto allUnitClauses = new Set();
+    void all_initial_unit_clauses() {
         for (auto c = 0; c < numClauses; c++) {
             auto clauseVec = the_cnf[c];
             if (clauseVec.size() == 1) {
-                allUnitClauses->insert(c);
+                unitClauses.insert(c);
             }
         }
-        return allUnitClauses;
     };
 
-    Set* all_initial_empty_clauses() {
-        auto allEmptyClauses = new Set();
+    void all_initial_empty_clauses() {
         for (auto c = 0; c < numClauses; c++) {
             auto clauseVec = the_cnf[c];
             if (clauseVec.empty()) {
-                allEmptyClauses->insert(c);
+                emptyClauses.insert(c);
             }
         }
-        return allEmptyClauses;
     }
 
-    [[nodiscard]] Set* all_initial_literals() const {
-        auto allInitialLiterals = new Set();
+    void all_initial_literals() {
         for (auto& clauseVec: the_cnf) {
             for (auto& cnfLiteral: clauseVec) {
                 if (cnfLiteral == 0) {
                     throw invalid_argument("CNF literal cannot be 0. Abort!");
                 }
-                allInitialLiterals->insert(from_cnf_literal(cnfLiteral));
+                allLiterals.insert(from_cnf_literal(cnfLiteral));
             }
         }
-        return allInitialLiterals;
     }
 
-    [[nodiscard]] Set* all_initial_pure_literals() const {
+    void all_initial_pure_literals() {
         Set positives;
         Set negatives;
         for (auto& clauseVec: the_cnf) {
@@ -116,13 +109,13 @@ typedef struct Formula {
         }
         auto purePos = set_diff(positives, *set_neg(negatives));
         auto pureNeg = set_diff(negatives, *set_neg(positives));
-        return from_cnf_literals(*set_add(*purePos, *pureNeg));
+        pureLiterals = *from_cnf_literals(*set_add(*purePos, *pureNeg));
     }
 
     [[nodiscard]] vector<vector<int>>* produce() const {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
-            if (deletedClauses->contains(c)) {
+            if (deletedClauses.contains(c)) {
                 continue;
             }
 
@@ -150,7 +143,7 @@ typedef struct Formula {
         auto cnf = new vector<vector<int>>();
         for (auto c = 0; c < numClauses; c++) {
             auto& cnfClause = _cnf->at(c);
-            if (deletedClauses->contains(c)) {
+            if (deletedClauses.contains(c)) {
                 continue;
             }
 
@@ -188,38 +181,38 @@ typedef struct Formula {
         return u <= literalSize ? u + literalSize : u - literalSize;
     }
 
-    void on_literal_change(int literal) const {
+    void on_literal_change(int literal) {
         // maintain pureLiterals
         int nLiteral = neg_literal(literal);
 
         if (clausesOf[literal].empty()) {
             if (clausesOf[nLiteral].empty()) {
-                pureLiterals->erase(literal);
-                pureLiterals->erase(nLiteral);
+                pureLiterals.erase(literal);
+                pureLiterals.erase(nLiteral);
             } else {
-                pureLiterals->insert(nLiteral);
+                pureLiterals.insert(nLiteral);
             }
         } else {
             if (clausesOf[nLiteral].empty()) {
-                pureLiterals->insert(literal);
+                pureLiterals.insert(literal);
             } else {
-                pureLiterals->erase(literal);
-                pureLiterals->erase(nLiteral);
+                pureLiterals.erase(literal);
+                pureLiterals.erase(nLiteral);
             }
         }
 
         // maintain allLiterals
         if (clausesOf[literal].empty()) {
-            allLiterals->erase(literal);
+            allLiterals.erase(literal);
         } else {
-            allLiterals->insert(literal);
+            allLiterals.insert(literal);
         }
     }
 
     void delete_clause(int clause) {
-        deletedClauses->insert(clause);
-        unitClauses->erase(clause);
-        emptyClauses->erase(clause);
+        deletedClauses.insert(clause);
+        unitClauses.erase(clause);
+        emptyClauses.erase(clause);
 
         // remove all literals from clause
         for (auto& literal: literalsIn[clause]) {
@@ -238,13 +231,13 @@ typedef struct Formula {
 
         // report any unit clause
         if (literalsIn[clause].size() == 1) {
-            unitClauses->insert(clause);
+            unitClauses.insert(clause);
             return;
         }
         // report any empty clause
         if (literalsIn[clause].empty()) {
-            emptyClauses->insert(clause);
-            unitClauses->erase(clause);
+            emptyClauses.insert(clause);
+            unitClauses.erase(clause);
         }
     }
 
@@ -254,7 +247,7 @@ typedef struct Formula {
         literalsIn[newClause].insert(literal);
         clausesOf[literal].insert(newClause);
 
-        unitClauses->insert(newClause);
+        unitClauses.insert(newClause);
 
         on_literal_change(literal);
     }
@@ -267,7 +260,7 @@ typedef struct Formula {
     }
 
     [[nodiscard]] bool is_all_pure_literals() const {
-        return pureLiterals->size() >= allLiterals->size();
+        return pureLiterals.size() >= allLiterals.size();
     }
 
 } Formula;

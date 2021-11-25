@@ -55,13 +55,13 @@ void test_formula_convert() {
 void test_initial_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    auto pureLiterals1 = f1.all_initial_pure_literals();
-    assert(equal(pureLiterals1->begin(), pureLiterals1->end(), (vector<int>{5/*-1*/}).begin()));
+    auto& pureLiterals1 = f1.pureLiterals;
+    assert(equal(pureLiterals1.begin(), pureLiterals1.end(), (vector<int>{5/*-1*/}).begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
     auto f2 = Formula(cnf2);
-    auto pureLiterals2 = f2.all_initial_pure_literals();
-    assert(equal(pureLiterals2->begin(), pureLiterals2->end(), (vector<int>{3}).begin()));
+    auto& pureLiterals2 = f2.pureLiterals;
+    assert(equal(pureLiterals2.begin(), pureLiterals2.end(), (vector<int>{3}).begin()));
 }
 
 void test_empty_clause1() {
@@ -69,7 +69,7 @@ void test_empty_clause1() {
     auto f = Formula(cnf);
     f.unit_propagation(2);
     Set expected{1};
-    assert(equal(f.emptyClauses->begin(), f.emptyClauses->end(), expected.begin()));
+    assert(equal(f.emptyClauses.begin(), f.emptyClauses.end(), expected.begin()));
 }
 
 void test_empty_clause2() {
@@ -77,36 +77,36 @@ void test_empty_clause2() {
     auto f = Formula(cnf);
     f.unit_propagation(2);
     Set expected{2};
-    assert(equal(f.emptyClauses->begin(), f.emptyClauses->end(), expected.begin()));
+    assert(equal(f.emptyClauses.begin(), f.emptyClauses.end(), expected.begin()));
 }
 
 void test_unit_clauses1() {
     vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
     auto f = Formula(cnf);
-    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1, 3}).begin()));
+    assert(equal(f.unitClauses.begin(), f.unitClauses.end(), ((Set) {1, 3}).begin()));
 }
 
 void test_unit_clauses2() {
     vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
     auto f = Formula(cnf);
     f.unit_propagation(1);
-    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
+    assert(equal(f.unitClauses.begin(), f.unitClauses.end(), ((Set) {1}).begin()));
 }
 
 void test_unit_clauses3() {
     vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-2}, vector<int>{-4, -1, 2}, vector<int>{1}};
     auto f = Formula(cnf);
     f.unit_propagation(5/*-1*/);
-    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {1}).begin()));
+    assert(equal(f.unitClauses.begin(), f.unitClauses.end(), ((Set) {1}).begin()));
 }
 
 void test_pure_literal_maintenance1() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    auto pures = set_produce(*f1.pureLiterals);
+    auto pures = set_produce(f1.pureLiterals);
     assert(equal(pures->begin(), pures->end(), (vector<int>{5/*-1*/}).begin()));
     f1.delete_clause(1);
-    pures = set_produce(*f1.pureLiterals);
+    pures = set_produce(f1.pureLiterals);
     assert(equal(pures->begin(), pures->end(), (vector<int>{2, 3, 5/*-1*/, 8/*-4*/}).begin()));
 }
 
@@ -114,20 +114,20 @@ void test_pure_literal_maintenance2() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     f1.delete_literal_from(8/*-4*/, 2);
-    auto pures = set_produce(*f1.pureLiterals);
+    auto pures = set_produce(f1.pureLiterals);
     assert(equal(pures->begin(), pures->end(), (vector<int>{4, 5/*-1*/}).begin()));
 }
 
 void test_all_initial_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    auto allLiterals1 = set_produce(*f1.allLiterals);
+    auto allLiterals1 = set_produce(f1.allLiterals);
     assert(equal(allLiterals1->begin(), allLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/, 7/*-3*/, 8/*-4*/}).begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
     auto f2 = Formula(cnf2);
-    auto allLiterals2 = set_produce(*f2.allLiterals);
+    auto allLiterals2 = set_produce(f2.allLiterals);
     assert(equal(allLiterals2->begin(), allLiterals2->end(),
                  (vector<int>{1, 2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
 }
@@ -136,22 +136,22 @@ void test_all_literals_maintenance() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     f1.delete_literal_from(7/*-3*/, 1);
-    auto allLiterals1 = set_produce(*f1.allLiterals);
+    auto allLiterals1 = set_produce(f1.allLiterals);
     assert(equal(allLiterals1->begin(), allLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
 
     f1.delete_clause(2);
-    allLiterals1 = set_produce(*f1.allLiterals);
+    allLiterals1 = set_produce(f1.allLiterals);
     assert(equal(allLiterals1->begin(), allLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/}).begin()));
 
     f1.delete_literal_from(4, 1);
-    allLiterals1 = set_produce(*f1.allLiterals);
+    allLiterals1 = set_produce(f1.allLiterals);
     assert(equal(allLiterals1->begin(), allLiterals1->end(),
                  (vector<int>{2, 3, 5/*-1*/, 6/*-2*/}).begin()));
 
     f1.delete_clause(0);
-    allLiterals1 = set_produce(*f1.allLiterals);
+    allLiterals1 = set_produce(f1.allLiterals);
     assert(equal(allLiterals1->begin(), allLiterals1->end(),
                  (vector<int>{6/*-2*/}).begin()));
 }
@@ -177,18 +177,18 @@ void test_add_unit_clause() {
     vector<vector<int>> expected{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}, vector<int>{3}};
     assert(equal(expected.begin(), expected.end(), f.produce()->begin()));
     assert(equal(expected.begin(), expected.end(), f.produce2()->begin()));
-    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {3}).begin()));
+    assert(equal(f.unitClauses.begin(), f.unitClauses.end(), ((Set) {3}).begin()));
 
     f.add_unit_clause(5/*-1*/);
     vector<vector<int>> expected2{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}, vector<int>{3},
                                   vector<int>{-1}};
     assert(equal(expected2.begin(), expected2.end(), f.produce()->begin()));
     assert(equal(expected2.begin(), expected2.end(), f.produce2()->begin()));
-    assert(equal(f.unitClauses->begin(), f.unitClauses->end(), ((Set) {3, 4}).begin()));
+    assert(equal(f.unitClauses.begin(), f.unitClauses.end(), ((Set) {3, 4}).begin()));
 
-    assert(equal(f.pureLiterals->begin(), f.pureLiterals->end(), (vector<int>{5/*-1*/}).begin()));
+    assert(equal(f.pureLiterals.begin(), f.pureLiterals.end(), (vector<int>{5/*-1*/}).begin()));
     f.add_unit_clause(1);
-    assert(equal(f.pureLiterals->begin(), f.pureLiterals->end(), (vector<int>{}).begin()));
+    assert(equal(f.pureLiterals.begin(), f.pureLiterals.end(), (vector<int>{}).begin()));
 }
 
 void test_pure_literal_assign1() {
