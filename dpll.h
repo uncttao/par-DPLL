@@ -44,10 +44,11 @@ bool dpll(Formula& formula) {
     if (activeLiterals.empty()) {
         return false;
     }
+
     auto someLiteral = *activeLiterals.begin();
-    auto leftFormula = formula;
+    auto leftFormula = formula;     // make a copy
     leftFormula.add_unit_clause(someLiteral);
-    auto rightFormula = formula;
+    auto rightFormula = formula;    // make a copy
     rightFormula.add_unit_clause(rightFormula.neg_literal(someLiteral));
     return dpll(leftFormula) || dpll(rightFormula);
 }
