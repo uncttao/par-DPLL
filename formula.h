@@ -12,7 +12,7 @@ typedef struct Formula {
     vector<Set > clausesOf;
     vector<Set > literalsIn;
 
-    Set allLiterals;
+    Set activeLiterals;
     Set pureLiterals;
 
     Set deletedClauses;
@@ -87,7 +87,7 @@ typedef struct Formula {
                 if (cnfLiteral == 0) {
                     throw invalid_argument("CNF literal cannot be 0. Abort!");
                 }
-                allLiterals.insert(from_cnf_literal(cnfLiteral));
+                activeLiterals.insert(from_cnf_literal(cnfLiteral));
             }
         }
     }
@@ -201,11 +201,11 @@ typedef struct Formula {
             }
         }
 
-        // maintain allLiterals
+        // maintain activeLiterals
         if (clausesOf[literal].empty()) {
-            allLiterals.erase(literal);
+            activeLiterals.erase(literal);
         } else {
-            allLiterals.insert(literal);
+            activeLiterals.insert(literal);
         }
     }
 
@@ -260,7 +260,7 @@ typedef struct Formula {
     }
 
     [[nodiscard]] bool is_all_pure_literals() const {
-        return pureLiterals.size() >= allLiterals.size();
+        return pureLiterals.size() >= activeLiterals.size();
     }
 
 } Formula;

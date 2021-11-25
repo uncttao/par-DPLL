@@ -40,11 +40,11 @@ bool dpll(Formula& formula) {
         return stepResult == Sat;
     }
 
-    auto& allLiterals = formula.allLiterals;
-    if (allLiterals.empty()) {
+    auto& activeLiterals = formula.activeLiterals;
+    if (activeLiterals.empty()) {
         return false;
     }
-    auto someLiteral = *allLiterals.begin();
+    auto someLiteral = *activeLiterals.begin();
     auto leftFormula = formula;
     leftFormula.add_unit_clause(someLiteral);
     auto rightFormula = formula;

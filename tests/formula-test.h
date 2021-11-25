@@ -121,14 +121,14 @@ void test_pure_literal_maintenance2() {
 void test_all_initial_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    auto allLiterals1 = set_produce(f1.allLiterals);
-    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+    auto activeLiterals1 = set_produce(f1.activeLiterals);
+    assert(equal(activeLiterals1->begin(), activeLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/, 7/*-3*/, 8/*-4*/}).begin()));
 
     vector<vector<int>> cnf2{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
     auto f2 = Formula(cnf2);
-    auto allLiterals2 = set_produce(f2.allLiterals);
-    assert(equal(allLiterals2->begin(), allLiterals2->end(),
+    auto activeLiterals2 = set_produce(f2.activeLiterals);
+    assert(equal(activeLiterals2->begin(), activeLiterals2->end(),
                  (vector<int>{1, 2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
 }
 
@@ -136,23 +136,23 @@ void test_all_literals_maintenance() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
     f1.delete_literal_from(7/*-3*/, 1);
-    auto allLiterals1 = set_produce(f1.allLiterals);
-    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+    auto activeLiterals1 = set_produce(f1.activeLiterals);
+    assert(equal(activeLiterals1->begin(), activeLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/, 8/*-4*/}).begin()));
 
     f1.delete_clause(2);
-    allLiterals1 = set_produce(f1.allLiterals);
-    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+    activeLiterals1 = set_produce(f1.activeLiterals);
+    assert(equal(activeLiterals1->begin(), activeLiterals1->end(),
                  (vector<int>{2, 3, 4, 5/*-1*/, 6/*-2*/}).begin()));
 
     f1.delete_literal_from(4, 1);
-    allLiterals1 = set_produce(f1.allLiterals);
-    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+    activeLiterals1 = set_produce(f1.activeLiterals);
+    assert(equal(activeLiterals1->begin(), activeLiterals1->end(),
                  (vector<int>{2, 3, 5/*-1*/, 6/*-2*/}).begin()));
 
     f1.delete_clause(0);
-    allLiterals1 = set_produce(f1.allLiterals);
-    assert(equal(allLiterals1->begin(), allLiterals1->end(),
+    activeLiterals1 = set_produce(f1.activeLiterals);
+    assert(equal(activeLiterals1->begin(), activeLiterals1->end(),
                  (vector<int>{6/*-2*/}).begin()));
 }
 
