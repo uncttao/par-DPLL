@@ -1,5 +1,4 @@
 #include <iostream>
-#include "dpll.h"
 #include "tests/all.h"
 
 int main() {

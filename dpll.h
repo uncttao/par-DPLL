@@ -7,8 +7,27 @@
 
 using namespace std;
 
-bool dpll() {
-    return false;
+enum StepResult {
+    Sat, Unsat, Continue
+};
+
+StepResult dpll_step(Formula& formula) {
+    if (formula.is_all_pure_literals()) {
+        return Sat;
+    }
+    if (!formula.emptyClauses->empty()) {
+        return Unsat;
+    }
+    auto unitClauses = *formula.unitClauses;
+    for (auto& unitClause: unitClauses) {
+        auto literal = *formula.literalsIn[unitClause].begin();
+        formula.unit_propagation(literal);
+    }
+    auto pureLiterals = *formula.pureLiterals;
+    for (auto& pureLiteral: pureLiterals) {
+        formula.pure_literal_assign(pureLiteral);
+    }
+    return Continue;
 }
 
 #endif //PAR_DPLL_DPLL_H

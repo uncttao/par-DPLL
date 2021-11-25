@@ -4,7 +4,6 @@
 #include <vector>
 #include "../utils.h"
 #include "../formula.h"
-#include "dpll.h"
 #include <cassert>
 
 using namespace std;

@@ -28,11 +28,11 @@ typedef struct Formula {
         clausesOf = new Set[literalSize * 2 + 1];
         literalsIn.resize(numClauses);
         deletedClauses = new Set[numClauses];
-        emptyClauses = new Set[numClauses];
 
         allLiterals = all_initial_literals();
         pureLiterals = all_initial_pure_literals();
         unitClauses = all_initial_unit_clauses();
+        emptyClauses = all_initial_empty_clauses();
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
@@ -74,6 +74,17 @@ typedef struct Formula {
         }
         return allUnitClauses;
     };
+
+    Set* all_initial_empty_clauses() {
+        auto allEmptyClauses = new Set();
+        for (auto c = 0; c < numClauses; c++) {
+            auto clauseVec = the_cnf[c];
+            if (clauseVec.empty()) {
+                allEmptyClauses->insert(c);
+            }
+        }
+        return allEmptyClauses;
+    }
 
     [[nodiscard]] Set* all_initial_literals() const {
         auto allInitialLiterals = new Set();
@@ -253,10 +264,6 @@ typedef struct Formula {
         for (auto& clause: clauses) {
             delete_clause(clause);
         }
-    }
-
-    [[nodiscard]] int num_of_active_clauses() const {
-        return numClauses - deletedClauses->size();
     }
 
     [[nodiscard]] bool is_all_pure_literals() const {
