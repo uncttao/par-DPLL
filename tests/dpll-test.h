@@ -44,11 +44,41 @@ void test_dpll_step4() {
     assert(result == Sat);
 }
 
+void test_dpll1() {
+    vector<vector<int>> cnf{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
+    auto f = Formula(cnf);
+    assert(dpll(f));
+}
+
+void test_dpll2() {
+    vector<vector<int>> cnf{vector<int>{-4, -2, 3}, vector<int>{-2, 1, 3}, vector<int>{-1, 2, 4}};
+    auto f = Formula(cnf);
+    assert(dpll(f));
+}
+
+void test_dpll3() {
+    vector<vector<int>> cnf{vector<int>{-1}, vector<int>{1}};
+    auto f = Formula(cnf);
+    assert(!dpll(f));
+}
+
+void test_dpll4() {
+    vector<vector<int>> cnf{vector<int>{1, 2, 3}, vector<int>{1, 2, -3}, vector<int>{1, -2, 3}, vector<int>{1, -2, -3},
+                            vector<int>{-1, 2, 3}, vector<int>{-1, 2, -3}, vector<int>{-1, -2, 3},
+                            vector<int>{-1, -2, -3}};
+    auto f = Formula(cnf);
+    assert(!dpll(f));
+}
+
 void test_dpll() {
     test_dpll_step1();
     test_dpll_step2();
     test_dpll_step3();
     test_dpll_step4();
+    test_dpll1();
+    test_dpll2();
+    test_dpll3();
+    test_dpll4();
 }
 
 #endif //PAR_DPLL_DPLL_TEST_H
