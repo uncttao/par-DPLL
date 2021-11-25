@@ -16,7 +16,6 @@ typedef struct Formula {
     Set* pureLiterals;
 
     Set* deletedClauses;
-
     Set* emptyClauses;
     Set* unitClauses;
 
@@ -247,6 +246,13 @@ typedef struct Formula {
         unitClauses->insert(newClause);
 
         on_literal_change(literal);
+    }
+
+    void pure_literal_assign(int literal) {
+        auto clauses = clausesOf[literal];
+        for (auto& clause: clauses) {
+            delete_clause(clause);
+        }
     }
 
     [[nodiscard]] int num_of_active_clauses() const {
