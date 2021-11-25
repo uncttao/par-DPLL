@@ -27,7 +27,7 @@ typedef struct Formula {
 
         clausesOf = new Set[literalSize * 2 + 1];
         literalsIn.resize(numClauses);
-        deletedClauses = new Set[numClauses];
+        deletedClauses = new Set();
 
         allLiterals = all_initial_literals();
         pureLiterals = all_initial_pure_literals();
