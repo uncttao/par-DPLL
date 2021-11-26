@@ -4,12 +4,12 @@
 #include "system.h"
 
 int main() {
-#if RUN_TEST
+#if TEST_MODE
     test_all();
-#endif
-
+#else
     auto formula = Formula(*parse_cnf());
     cout << dpll(formula) << endl;
+#endif
 
     return 0;
 }

@@ -70,6 +70,13 @@ void test_dpll4() {
     assert(!dpll(f));
 }
 
+void test_dpll5() {
+    vector<vector<int>> cnf{vector<int>{-4, 1, 3}, vector<int>{-5, -2, -1}, vector<int>{-2, 4, 5},
+                            vector<int>{-2, 3, 5}, vector<int>{-3, 1, 4}};
+    auto f = Formula(cnf);
+    assert(dpll(f));
+}
+
 void test_dpll() {
     test_dpll_step1();
     test_dpll_step2();
@@ -79,6 +86,7 @@ void test_dpll() {
     test_dpll2();
     test_dpll3();
     test_dpll4();
+    test_dpll5();
 }
 
 #endif //PAR_DPLL_DPLL_TEST_H

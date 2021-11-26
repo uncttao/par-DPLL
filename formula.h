@@ -4,6 +4,10 @@
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
+#include "system.h"
+
+using namespace std;
 
 typedef struct Formula {
     int numClauses;
@@ -165,6 +169,9 @@ typedef struct Formula {
         // remove every clause containing "u"
         auto clausesOfU = clausesOf[u];   // need to make a copy first
         for (auto& clauseOfU: clausesOfU) {
+#if DEBUG_MODE
+            cout << "deleting clause " << clauseOfU << endl;
+#endif
             delete_clause(clauseOfU);
         }
 
@@ -173,6 +180,9 @@ typedef struct Formula {
 
         auto clausesOfNu = clausesOf[nu];   // need to make a copy first
         for (auto& clauseOfNu: clausesOfNu) {
+#if DEBUG_MODE
+            cout << "removing " << nu << " from clause " << clauseOfNu << endl;
+#endif
             delete_literal_from(nu, clauseOfNu);
         }
     }
@@ -255,6 +265,9 @@ typedef struct Formula {
     void pure_literal_assign(int literal) {
         auto clauses = clausesOf[literal];
         for (auto& clause: clauses) {
+#if DEBUG_MODE
+            cout << "deleting clause " << clause << endl;
+#endif
             delete_clause(clause);
         }
     }
