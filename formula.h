@@ -50,7 +50,7 @@ typedef struct Formula {
     }
 
     static int literal_size(vector<vector<int>>& cnf) {
-        Set literals;
+        unordered_set<int> literals;
         for (auto& clauseVec: cnf) {
             for (auto& cnfLiteral: clauseVec) {
                 literals.insert(abs(cnfLiteral));
@@ -59,7 +59,7 @@ typedef struct Formula {
         return literals.size();
     }
 
-    Set* from_cnf_literals(Set& cnfLiterals) const {
+    Set* from_cnf_literals(unordered_set<int>& cnfLiterals) const {
         Set* sCopy = new Set();
         for (auto& item: cnfLiterals) {
             sCopy->insert(from_cnf_literal(item));
@@ -97,8 +97,8 @@ typedef struct Formula {
     }
 
     void all_initial_pure_literals() {
-        Set positives;
-        Set negatives;
+        unordered_set<int> positives;
+        unordered_set<int> negatives;
         for (auto& clauseVec: the_cnf) {
             for (auto& cnfLiteral: clauseVec) {
                 if (cnfLiteral == 0) {
@@ -125,7 +125,7 @@ typedef struct Formula {
 
             cnf->push_back(vector<int>());
             auto& cnfClause = cnf->back();
-            for (auto& literal: literalsIn[c]) {
+            for (auto& literal: literalsIn[c].bag()) {
                 cnfClause.push_back(cnf_literal(literal));
             }
             sort(cnfClause.begin(), cnfClause.end());
@@ -138,8 +138,7 @@ typedef struct Formula {
         auto _cnf = new vector<vector<int>>();
         _cnf->resize(numClauses);
         for (auto literal = 0; literal < literalSize * 2 + 1; literal++) {
-            auto clausesOfLiteral = clausesOf[literal];
-            for (auto clause: clausesOfLiteral) {
+            for (auto clause: clausesOf[literal].bag()) {
                 _cnf->at(clause).push_back(cnf_literal(literal));
             }
         }
@@ -167,8 +166,7 @@ typedef struct Formula {
 
     void unit_propagation(int u) {
         // remove every clause containing "u"
-        auto clausesOfU = clausesOf[u];   // need to make a copy first
-        for (auto& clauseOfU: clausesOfU) {
+        for (auto& clauseOfU: clausesOf[u].bag()) {
 #if DEBUG_MODE
             cout << "deleting clause " << clauseOfU << endl;
 #endif
@@ -178,8 +176,7 @@ typedef struct Formula {
         // remove every "~u" from every clause
         auto nu = neg_literal(u);
 
-        auto clausesOfNu = clausesOf[nu];   // need to make a copy first
-        for (auto& clauseOfNu: clausesOfNu) {
+        for (auto& clauseOfNu: clausesOf[nu].bag()) {
 #if DEBUG_MODE
             cout << "removing " << nu << " from clause " << clauseOfNu << endl;
 #endif
@@ -225,7 +222,7 @@ typedef struct Formula {
         emptyClauses.erase(clause);
 
         // remove all literals from clause
-        for (auto& literal: literalsIn[clause]) {
+        for (auto& literal: literalsIn[clause].bag()) {
             clausesOf[literal].erase(clause);
             on_literal_change(literal);
         }
@@ -263,8 +260,7 @@ typedef struct Formula {
     }
 
     void pure_literal_assign(int literal) {
-        auto clauses = clausesOf[literal];
-        for (auto& clause: clauses) {
+        for (auto& clause: clausesOf[literal].bag()) {
 #if DEBUG_MODE
             cout << "deleting clause " << clause << endl;
 #endif

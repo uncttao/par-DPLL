@@ -26,20 +26,18 @@ StepResult dpll_step(Formula& formula) {
 #endif
         return Unsat;
     }
-    auto unitClauses = formula.unitClauses;
-    for (auto& unitClause: unitClauses) {
+    for (auto& unitClause: formula.unitClauses.bag()) {
         auto& clauseLiterals = formula.literalsIn[unitClause];
         if (clauseLiterals.empty()) {
             continue;
         }
-        auto literal = *clauseLiterals.begin();
+        auto literal = *clauseLiterals.bag().begin();   // TODO
 #if DEBUG_MODE
         cout << "unit propagate " << formula.cnf_literal(literal) << endl;
 #endif
         formula.unit_propagation(literal);
     }
-    auto pureLiterals = formula.pureLiterals;
-    for (auto& pureLiteral: pureLiterals) {
+    for (auto& pureLiteral: formula.pureLiterals.bag()) {
 #if DEBUG_MODE
         cout << "assign pure literal " << formula.cnf_literal(pureLiteral) << endl;
 #endif
@@ -71,7 +69,7 @@ bool dpll(Formula& formula) {
         return formula.emptyClauses.empty();
     }
 
-    auto someLiteral = *activeLiterals.begin();
+    auto someLiteral = *activeLiterals.bag().begin();   // TODO
 #if DEBUG_MODE
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif

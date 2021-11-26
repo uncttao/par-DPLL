@@ -4,43 +4,34 @@
 #include <unordered_set>
 #include <vector>
 #include <iostream>
+#include "intset.h"
 
 using namespace std;
 
-#define Set unordered_set<int>
-#define set(...) unordered_set<int>({__VA_ARGS__})
+#define Set IntSet
 
-Set* set_diff(Set& s1, Set& s2) {
-    Set* s1Copy = new Set(s1);
+unordered_set<int>* set_diff(unordered_set<int>& s1, unordered_set<int>& s2) {
+    auto* s1Copy = new unordered_set<int>(s1);
     for (auto& s2Item: s2) {
         s1Copy->erase(s2Item);
     }
     return s1Copy;
 }
 
-Set* set_add(Set& s1, Set& s2) {
-    Set* s1Copy = new Set(s1);
+unordered_set<int>* set_add(unordered_set<int>& s1, unordered_set<int>& s2) {
+    auto* s1Copy = new unordered_set<int>(s1);
     for (auto& s2Item: s2) {
         s1Copy->insert(s2Item);
     }
     return s1Copy;
 }
 
-Set* set_neg(Set& s) {
-    Set* sCopy = new Set();
+unordered_set<int>* set_neg(unordered_set<int>& s) {
+    auto* sCopy = new unordered_set<int>();
     for (auto& item: s) {
         sCopy->insert(-item);
     }
     return sCopy;
-}
-
-vector<int>* set_produce(Set& s) {
-    auto vec = new vector<int>();
-    for (auto& item: s) {
-        vec->push_back(item);
-    }
-    sort(vec->begin(), vec->end());
-    return vec;
 }
 
 void print_cnf(vector<vector<int>>& cnf) {

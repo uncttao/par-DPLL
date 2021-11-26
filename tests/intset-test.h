@@ -6,8 +6,7 @@
 #include "../intset.h"
 
 void test_intset1() {
-    IntSet intSet(5);
-    assert(intSet.capacity == 5);
+    IntSet intSet;
 
     intSet.insert(0);
     intSet.insert(4);
@@ -15,12 +14,12 @@ void test_intset1() {
     intSet.insert(2);
     assert(intSet.size() == 4);
 
-    auto iter = intSet.bag();
-    assert(equal(iter->begin(), iter->end(), (vector<int>{0, 2, 3, 4}).begin()));
+    auto& iter = intSet.bag();
+    assert(equal(iter.begin(), iter.end(), (vector<int>{0, 2, 3, 4}).begin()));
 }
 
 void test_intset2() {
-    IntSet intSet(5);
+    IntSet intSet;
 
     intSet.insert(0);
     intSet.insert(4);
@@ -28,12 +27,12 @@ void test_intset2() {
     intSet.insert(2);
     assert(intSet.size() == 3);
 
-    auto iter = intSet.bag();
-    assert(equal(iter->begin(), iter->end(), (vector<int>{0, 2, 4}).begin()));
+    auto& iter = intSet.bag();
+    assert(equal(iter.begin(), iter.end(), (vector<int>{0, 2, 4}).begin()));
 }
 
 void test_intset3() {
-    IntSet intSet(5);
+    IntSet intSet;
 
     intSet.insert(0);
     intSet.insert(4);
@@ -42,12 +41,12 @@ void test_intset3() {
     intSet.erase(2);
     assert(intSet.size() == 2);
 
-    auto iter = intSet.bag();
-    assert(equal(iter->begin(), iter->end(), (vector<int>{0, 4}).begin()));
+    auto& iter = intSet.bag();
+    assert(equal(iter.begin(), iter.end(), (vector<int>{0, 4}).begin()));
 }
 
 void test_intset4() {
-    IntSet intSet(5);
+    IntSet intSet;
 
     intSet.insert(0);
     intSet.insert(4);

@@ -11,18 +11,16 @@ typedef struct IntSet {
     int capacity;
     int s;
 
-    explicit IntSet(int n) {
-        vec.resize(n);
-        capacity = n;
-        s = 0;
-    }
-
     IntSet() {
         capacity = 0;
         s = 0;
     }
 
     void insert(int v) {
+        if (v + 1 > capacity) {
+            vec.resize(v + 1);
+            capacity = v + 1;
+        }
         if (!vec[v]) {
             s++;
         }
@@ -30,13 +28,19 @@ typedef struct IntSet {
     }
 
     void erase(int v) {
+        if (v >= capacity) {
+            return;
+        }
         if (vec[v]) {
             s--;
         }
         vec[v] = false;
     }
 
-    bool contains(int v) {
+    [[nodiscard]] bool contains(int v) const {
+        if (v >= capacity) {
+            return false;
+        }
         return vec[v];
     }
 
@@ -44,7 +48,17 @@ typedef struct IntSet {
         return s;
     }
 
-    vector<int>* bag() {
+    [[nodiscard]] bool empty() const {
+        return s <= 0;
+    }
+
+    void clear() {
+        for (auto i = 0; i < capacity; i++) {
+            vec[i] = false;
+        }
+    }
+
+    [[nodiscard]] vector<int>& bag() const {
         auto b = new vector<int>(s);
         auto bi = 0;
         for (auto i = 0; i < capacity; i++) {
@@ -52,9 +66,9 @@ typedef struct IntSet {
                 (*b)[bi++] = i;
             }
         }
-        return b;
+        return *b;  // TODO: need to free this outside
     }
 
-} FixedSizeSet;
+} IntSet;
 
 #endif //PAR_DPLL_INTSET_H
