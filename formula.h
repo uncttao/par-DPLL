@@ -272,8 +272,8 @@ typedef struct Formula {
         }
     }
 
-    [[nodiscard]] bool is_all_pure_literals() const {
-        return pureLiterals.size() >= activeLiterals.size();
+    [[nodiscard]] bool is_consistent() const {
+        return emptyClauses.empty() && pureLiterals.size() >= activeLiterals.size();
     }
 
 } Formula;

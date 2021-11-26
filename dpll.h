@@ -14,7 +14,7 @@ enum StepResult {
 };
 
 StepResult dpll_step(Formula& formula) {
-    if (formula.is_all_pure_literals()) {
+    if (formula.is_consistent()) {
 #if DEBUG_MODE
         cout << "sat by all pure literals!" << endl;
 #endif

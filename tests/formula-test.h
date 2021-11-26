@@ -159,15 +159,15 @@ void test_all_literals_maintenance() {
 void test_is_all_pure_literals() {
     vector<vector<int>> cnf1{vector<int>{-1, 2, 3}, vector<int>{-3, -2, 4}, vector<int>{-4, -1, 2}};
     auto f1 = Formula(cnf1);
-    assert(!f1.is_all_pure_literals());
+    assert(!f1.is_consistent());
     f1.delete_literal_from(2, 0);
-    assert(!f1.is_all_pure_literals());
+    assert(!f1.is_consistent());
     f1.delete_literal_from(2, 2);
-    assert(!f1.is_all_pure_literals());
+    assert(!f1.is_consistent());
     f1.delete_literal_from(3, 0);
-    assert(!f1.is_all_pure_literals());
+    assert(!f1.is_consistent());
     f1.delete_literal_from(4, 1);
-    assert(f1.is_all_pure_literals());
+    assert(f1.is_consistent());
 }
 
 void test_add_unit_clause() {
