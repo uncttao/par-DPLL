@@ -78,8 +78,7 @@ bool dpll(Formula& formula) {
 
     auto leftFormula = formula;     // make a copy
     leftFormula.add_unit_clause(someLiteral);
-    auto leftSat = dpll(leftFormula);
-    if (leftSat) {
+    if (dpll(leftFormula)) {
         return true;
     } else {
         auto rightFormula = formula;    // make a copy
