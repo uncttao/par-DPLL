@@ -72,14 +72,20 @@ bool dpll(Formula& formula) {
     }
 
     auto someLiteral = *activeLiterals.begin();
-    auto leftFormula = formula;     // make a copy
-    leftFormula.add_unit_clause(someLiteral);
 #if DEBUG_MODE
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif
-    auto rightFormula = formula;    // make a copy
-    rightFormula.add_unit_clause(rightFormula.neg_literal(someLiteral));
-    return dpll(leftFormula) || dpll(rightFormula);
+
+    auto leftFormula = formula;     // make a copy
+    leftFormula.add_unit_clause(someLiteral);
+    auto leftSat = dpll(leftFormula);
+    if (leftSat) {
+        return true;
+    } else {
+        auto rightFormula = formula;    // make a copy
+        rightFormula.add_unit_clause(rightFormula.neg_literal(someLiteral));
+        return dpll(rightFormula);
+    }
 }
 
 #endif //PAR_DPLL_DPLL_H
