@@ -2,7 +2,7 @@
 #define PAR_DPLL_INTSET_H
 
 #include <vector>
-#include <iterator>
+#include <cstdlib>
 
 using namespace std;
 
@@ -56,6 +56,15 @@ typedef struct IntSet {
         for (auto i = 0; i < capacity; i++) {
             vec[i] = false;
         }
+    }
+
+    [[nodiscard]] int first() const {
+        for (auto i = 0; i < capacity; i++) {
+            if (vec[i]) {
+                return i;
+            }
+        }
+        throw invalid_argument("trying to get first of empty IntSet!");
     }
 
     [[nodiscard]] vector<int>& bag() const {

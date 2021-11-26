@@ -69,7 +69,7 @@ bool dpll(Formula& formula) {
         return formula.emptyClauses.empty();
     }
 
-    auto someLiteral = *activeLiterals.bag().begin();   // TODO
+    auto someLiteral = activeLiterals.first();
 #if DEBUG_MODE
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif
