@@ -3,8 +3,10 @@
 
 #include <iostream>
 
+using namespace std;
+
 // credits: https://github.com/sukrutrao/SAT-Solver-DPLL
-vector<vector<int>>* parse_cnf() {
+vector<vector<int>>* parse_cnf(istream& input) {
     char c;   // store first character
     string s; // dummy string
 
@@ -12,18 +14,18 @@ vector<vector<int>>* parse_cnf() {
     int clause_count;
 
     while (true) {
-        cin >> c;
+        input >> c;
         if (c == 'c') // if comment
         {
-            getline(cin, s); // ignore
+            getline(input, s); // ignore
         } else             // else, if would be a p
         {
-            cin >> s; // this would be cnf
+            input >> s; // this would be cnf
             break;
         }
     }
-    cin >> literal_count;
-    cin >> clause_count;
+    input >> literal_count;
+    input >> clause_count;
 
     auto cnf = new vector<vector<int>>();
     cnf->resize(clause_count);
@@ -33,7 +35,7 @@ vector<vector<int>>* parse_cnf() {
     for (int i = 0; i < clause_count; i++) {
         while (true) // while the ith clause gets more literals
         {
-            cin >> literal;
+            input >> literal;
             if (literal != 0) {
                 (*cnf)[i].push_back(literal); // store it in the form 2n
             } else {
