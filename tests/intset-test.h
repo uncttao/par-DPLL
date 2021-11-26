@@ -13,7 +13,7 @@ void test_intset1() {
     intSet.insert(4);
     intSet.insert(3);
     intSet.insert(2);
-    assert(intSet.size == 4);
+    assert(intSet.size() == 4);
 
     auto iter = intSet.bag();
     assert(equal(iter->begin(), iter->end(), (vector<int>{0, 2, 3, 4}).begin()));
@@ -26,7 +26,7 @@ void test_intset2() {
     intSet.insert(4);
     intSet.insert(4);
     intSet.insert(2);
-    assert(intSet.size == 3);
+    assert(intSet.size() == 3);
 
     auto iter = intSet.bag();
     assert(equal(iter->begin(), iter->end(), (vector<int>{0, 2, 4}).begin()));
@@ -40,7 +40,7 @@ void test_intset3() {
     intSet.insert(4);
     intSet.insert(2);
     intSet.erase(2);
-    assert(intSet.size == 2);
+    assert(intSet.size() == 2);
 
     auto iter = intSet.bag();
     assert(equal(iter->begin(), iter->end(), (vector<int>{0, 4}).begin()));

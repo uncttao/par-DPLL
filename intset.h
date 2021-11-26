@@ -9,29 +9,29 @@ using namespace std;
 typedef struct IntSet {
     vector<bool> vec;
     int capacity;
-    int size;
+    int s;
 
     explicit IntSet(int n) {
         vec.resize(n);
         capacity = n;
-        size = 0;
+        s = 0;
     }
 
     IntSet() {
         capacity = 0;
-        size = 0;
+        s = 0;
     }
 
     void insert(int v) {
         if (!vec[v]) {
-            size++;
+            s++;
         }
         vec[v] = true;
     }
 
     void erase(int v) {
         if (vec[v]) {
-            size--;
+            s--;
         }
         vec[v] = false;
     }
@@ -40,8 +40,12 @@ typedef struct IntSet {
         return vec[v];
     }
 
+    [[nodiscard]] int size() const {
+        return s;
+    }
+
     vector<int>* bag() {
-        auto b = new vector<int>(size);
+        auto b = new vector<int>(s);
         auto bi = 0;
         for (auto i = 0; i < capacity; i++) {
             if (vec[i]) {
