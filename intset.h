@@ -56,6 +56,7 @@ typedef struct IntSet {
         for (auto i = 0; i < capacity; i++) {
             vec[i] = false;
         }
+        s = 0;
     }
 
     [[nodiscard]] int first() const {

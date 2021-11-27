@@ -28,10 +28,10 @@ StepResult dpll_step(Formula& formula) {
     }
     for (auto& unitClause: formula.unitClauses.bag()) {
         auto& clauseLiterals = formula.literalsIn[unitClause];
-        if (clauseLiterals.empty()) {
+        if (clauseLiterals.empty()) {   // possibly empty due to unit propagation
             continue;
         }
-        auto literal = *clauseLiterals.bag().begin();   // TODO
+        auto literal = clauseLiterals.first();
 #if DEBUG_MODE
         cout << "unit propagate " << formula.cnf_literal(literal) << endl;
 #endif
