@@ -69,7 +69,7 @@ typedef struct Formula {
 
     void all_initial_unit_clauses() {
         for (auto c = 0; c < numClauses; c++) {
-            auto clauseVec = the_cnf[c];
+            auto& clauseVec = the_cnf[c];
             if (clauseVec.size() == 1) {
                 unitClauses.insert(c);
             }
@@ -78,7 +78,7 @@ typedef struct Formula {
 
     void all_initial_empty_clauses() {
         for (auto c = 0; c < numClauses; c++) {
-            auto clauseVec = the_cnf[c];
+            auto& clauseVec = the_cnf[c];
             if (clauseVec.empty()) {
                 emptyClauses.insert(c);
             }
