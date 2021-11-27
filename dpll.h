@@ -10,6 +10,8 @@
 
 using namespace std;
 
+bool exit_all;
+
 enum StepResult {
     Sat, Unsat, Continue
 };
@@ -50,6 +52,10 @@ StepResult dpll_step(Formula& formula) {
 }
 
 bool dpll(Formula& formula) {
+    if (exit_all) {     // global parallel control
+        return false;
+    }
+
 #if DEBUG_MODE
     cout << "start of dpll" << endl;
     print_cnf(*formula.produce());
@@ -61,7 +67,11 @@ bool dpll(Formula& formula) {
 #endif
 
     if (stepResult != Continue) {
-        return stepResult == Sat;
+        auto sat = stepResult == Sat;
+        if (sat) {      // global parallel control
+            exit_all = true;
+        }
+        return sat;
     }
 
     auto& activeLiterals = formula.activeLiterals;
@@ -69,7 +79,11 @@ bool dpll(Formula& formula) {
 #if DEBUG_MODE
         cout << "no more active literals. quit!" << endl;
 #endif
-        return formula.emptyClauses.empty();
+        auto sat = formula.emptyClauses.empty();
+        if (sat) {      // global parallel control
+            exit_all = true;
+        }
+        return sat;
     }
 
     auto someLiteral = activeLiterals.first();
