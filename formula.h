@@ -13,8 +13,8 @@ typedef struct Formula {
     int numClauses;
     int literalSize;
 
-    vector<Set > clausesOf;
-    vector<Set > literalsIn;
+    vector<Set> clausesOf;
+    vector<Set> literalsIn;
 
     Set activeLiterals;
     Set pureLiterals;
