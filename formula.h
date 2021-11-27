@@ -2,6 +2,7 @@
 #define PAR_DPLL_FORMULA_H
 
 #include <vector>
+#include <algorithm>
 #include <cstdlib>
 #include <cmath>
 #include <iostream>

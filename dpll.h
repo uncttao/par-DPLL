@@ -77,8 +77,10 @@ bool dpll(Formula& formula) {
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif
 
-    bool left = branch_out(formula, someLiteral);                           // arg copies formula
+    bool left = cilk_spawn
+    branch_out(formula, someLiteral);                        // arg copies formula
     bool right = branch_out(formula, formula.neg_literal(someLiteral));     // arg copies formula
+    cilk_sync;
     return left || right;
 }
 

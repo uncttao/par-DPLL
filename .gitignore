@@ -1,6 +1,7 @@
 .idea
 cmake-build-*
 *.cnf
+main
 
 ### C++ template
 # Prerequisites
