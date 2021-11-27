@@ -20,7 +20,10 @@ int main(int argc, char* argv[]) {
 #if TIMING
         auto t0 = clock();
 #endif
-        cout << dpll(formula) << endl;
+        auto sat = dpll(formula);
+#if SHOW_RESULT
+        cout << sat << endl;
+#endif
 #if TIMING
         auto t1 = clock();
         auto ms = (t1 - t0) * 1000 / CLOCKS_PER_SEC;

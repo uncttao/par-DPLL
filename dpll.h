@@ -10,7 +10,9 @@
 
 using namespace std;
 
+#if USE_CILK
 bool exit_all;
+#endif
 
 enum StepResult {
     Sat, Unsat, Continue
@@ -52,9 +54,11 @@ StepResult dpll_step(Formula& formula) {
 }
 
 bool dpll(Formula& formula) {
+#if USE_CILK
     if (exit_all) {     // global parallel control
         return false;
     }
+#endif
 
 #if DEBUG_MODE
     cout << "start of dpll" << endl;
@@ -68,9 +72,11 @@ bool dpll(Formula& formula) {
 
     if (stepResult != Continue) {
         auto sat = stepResult == Sat;
+#if USE_CILK
         if (sat) {      // global parallel control
             exit_all = true;
         }
+#endif
         return sat;
     }
 
@@ -80,9 +86,11 @@ bool dpll(Formula& formula) {
         cout << "no more active literals. quit!" << endl;
 #endif
         auto sat = formula.emptyClauses.empty();
+#if USE_CILK
         if (sat) {      // global parallel control
             exit_all = true;
         }
+#endif
         return sat;
     }
 
@@ -91,11 +99,16 @@ bool dpll(Formula& formula) {
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif
 
-    bool left = cilk_spawn
-    branch_out(formula, someLiteral);                        // arg copies formula
+#if USE_CILK
+    bool left = cilk_spawn branch_out(formula, someLiteral);                // arg copies formula
     bool right = branch_out(formula, formula.neg_literal(someLiteral));     // arg copies formula
+#else
+    // arg copies formula
+    return branch_out(formula, someLiteral) || branch_out(formula, formula.neg_literal(someLiteral));
+#endif
+#if USE_CILK
     cilk_sync;
-    return left || right;
+#endif
 }
 
 bool branch_out(Formula formula, int someLiteral) {
