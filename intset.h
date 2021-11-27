@@ -76,7 +76,7 @@ typedef struct IntSet {
                 (*b)[bi++] = i;
             }
         }
-        return *b;  // TODO: need to free this outside
+        return *b;
     }
 
 } IntSet;
