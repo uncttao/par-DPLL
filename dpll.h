@@ -3,6 +3,7 @@
 
 #include <unordered_set>
 #include <iostream>
+#include <cilk/cilk.h>
 #include "utils.h"
 #include "formula.h"
 #include "system.h"
@@ -12,6 +13,8 @@ using namespace std;
 enum StepResult {
     Sat, Unsat, Continue
 };
+
+bool branch_out(Formula formula, int someLiteral);
 
 StepResult dpll_step(Formula& formula) {
     if (formula.is_consistent()) {
@@ -74,15 +77,14 @@ bool dpll(Formula& formula) {
     cout << "adding " << someLiteral << " (and negation) as unit clause" << endl;
 #endif
 
-    auto leftFormula = formula;     // make a copy
-    leftFormula.add_unit_clause(someLiteral);
-    if (dpll(leftFormula)) {
-        return true;
-    } else {
-        auto rightFormula = formula;    // make a copy
-        rightFormula.add_unit_clause(rightFormula.neg_literal(someLiteral));
-        return dpll(rightFormula);
-    }
+    bool left = branch_out(formula, someLiteral);                           // arg copies formula
+    bool right = branch_out(formula, formula.neg_literal(someLiteral));     // arg copies formula
+    return left || right;
+}
+
+bool branch_out(Formula formula, int someLiteral) {
+    formula.add_unit_clause(someLiteral);
+    return dpll(formula);
 }
 
 #endif //PAR_DPLL_DPLL_H
