@@ -13,6 +13,7 @@ using namespace std;
 typedef struct Formula {
     int numClauses;
     int literalSize;
+    int numLiterals;
 
     vector<Set> clausesOf;
     vector<Set> literalsIn;
@@ -29,14 +30,16 @@ typedef struct Formula {
     explicit Formula(vector<vector<int>>& cnf) : the_cnf(cnf) {
         numClauses = cnf.size();
         literalSize = literal_size(cnf);
+        numLiterals = literalSize * 2 + 1;
 
-        clausesOf.resize(literalSize * 2 + 1);
+        clausesOf.resize(numLiterals);
         literalsIn.resize(numClauses);
 
         all_initial_literals();
         all_initial_pure_literals();
         all_initial_unit_clauses();
         all_initial_empty_clauses();
+        deletedClauses.reserve(numClauses + numLiterals);  // count for possible unit clause appending
 
         for (auto clause = 0; clause < numClauses; clause++) {
             for (auto& cnfLiteral: cnf[clause]) {
@@ -69,6 +72,8 @@ typedef struct Formula {
     }
 
     void all_initial_unit_clauses() {
+        unitClauses.reserve(numClauses + numLiterals);  // count for possible unit clause appending
+
         for (auto c = 0; c < numClauses; c++) {
             auto& clauseVec = the_cnf[c];
             if (clauseVec.size() == 1) {
@@ -78,6 +83,8 @@ typedef struct Formula {
     };
 
     void all_initial_empty_clauses() {
+        emptyClauses.reserve(numClauses + numLiterals);  // count for possible unit clause appending
+
         for (auto c = 0; c < numClauses; c++) {
             auto& clauseVec = the_cnf[c];
             if (clauseVec.empty()) {
@@ -87,6 +94,8 @@ typedef struct Formula {
     }
 
     void all_initial_literals() {
+        activeLiterals.reserve(numLiterals);
+
         for (auto& clauseVec: the_cnf) {
             for (auto& cnfLiteral: clauseVec) {
                 if (cnfLiteral == 0) {
@@ -115,6 +124,7 @@ typedef struct Formula {
         auto purePos = set_diff(positives, *set_neg(negatives));
         auto pureNeg = set_diff(negatives, *set_neg(positives));
         pureLiterals = *from_cnf_literals(*set_add(*purePos, *pureNeg));
+        pureLiterals.resize(numLiterals);
     }
 
     [[nodiscard]] vector<vector<int>>* produce() const {
@@ -138,7 +148,7 @@ typedef struct Formula {
     [[nodiscard]] vector<vector<int>>* produce2() const {
         auto _cnf = new vector<vector<int>>();
         _cnf->resize(numClauses);
-        for (auto literal = 0; literal < literalSize * 2 + 1; literal++) {
+        for (auto literal = 0; literal < numLiterals; literal++) {
             for (auto clause: clausesOf[literal].bag()) {
                 _cnf->at(clause).push_back(cnf_literal(literal));
             }

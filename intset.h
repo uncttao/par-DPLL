@@ -16,6 +16,14 @@ typedef struct IntSet {
         s = 0;
     }
 
+    void resize(int n) {
+        vec.resize(n);
+    }
+
+    void reserve(int n) {
+        vec.reserve(n);
+    }
+
     void insert(int v) {
         if (v + 1 > capacity) {
             vec.resize(v + 1);
