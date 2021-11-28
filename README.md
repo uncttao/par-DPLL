@@ -29,7 +29,7 @@ The CPU model is `AMD EPYC 7313 16-Core Processor`.
 
 1) As the difficulty of the UNSAT problems increases, the scaling of the solver tends to improve.
 
-2) Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (now shown in the graphs).
+2) Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (not shown).
 
 ### Comments
 
@@ -38,3 +38,7 @@ Due to the irregularity of (UN)SAT problems, it could be difficult for DPLL solv
 ### Todo
 
 Optimize the implementation for both single-thread and multi-thread.
+
+### Pull Request
+
+Welcomed!
