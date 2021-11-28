@@ -18,7 +18,7 @@ enum StepResult {
     Sat, Unsat, Continue
 };
 
-bool branch_out(Formula formula, int someLiteral);
+bool branch_out(Formula& formula, int someLiteral, bool copy);
 
 StepResult dpll_step(Formula& formula) {
     if (formula.is_consistent()) {
@@ -100,20 +100,29 @@ bool dpll(Formula& formula) {
 #endif
 
 #if USE_CILK
-    bool left = cilk_spawn branch_out(formula, someLiteral);                // arg copies formula
-    bool right = branch_out(formula, formula.neg_literal(someLiteral));     // arg copies formula
+    auto formula2 = formula;
+    bool left = cilk_spawn
+    branch_out(formula2, someLiteral, false);
+    bool right = branch_out(formula, formula.neg_literal(someLiteral), false);
 #else
-    // arg copies formula
-    return branch_out(formula, someLiteral) || branch_out(formula, formula.neg_literal(someLiteral));
+    // first branch copies formula
+    return branch_out(formula, someLiteral, true) || branch_out(formula, formula.neg_literal(someLiteral), false);
 #endif
 #if USE_CILK
     cilk_sync;
+    return left || right;
 #endif
 }
 
-bool branch_out(Formula formula, int someLiteral) {
-    formula.add_unit_clause(someLiteral);
-    return dpll(formula);
+bool branch_out(Formula& formula, int someLiteral, bool copy) {
+    if (copy) {
+        auto formula2 = formula;
+        formula2.add_unit_clause(someLiteral);
+        return dpll(formula2);
+    } else {
+        formula.add_unit_clause(someLiteral);
+        return dpll(formula);
+    }
 }
 
 #endif //PAR_DPLL_DPLL_H
