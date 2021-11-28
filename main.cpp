@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 #if TIMING
         auto t1 = clock();
         auto ms = (t1 - t0) * 1000 / CLOCKS_PER_SEC;
-        cout << "Took time " << (int) ms << "." << endl;
+        cout << ms << endl;
 #endif
 
         fb.close();
