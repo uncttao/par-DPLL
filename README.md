@@ -19,9 +19,15 @@ The CPU model is `AMD EPYC 7313 16-Core Processor`.
 
 The benchmark only accounts for the DPLL *solving* time (not parsing time and etc.).
 
+#### uuf50-218 (50 variables and 218 clauses)
+
 ![uuf50-218](https://github.com/uncttao/par-DPLL/blob/master/SATLIB-Benchmark%20Problems%2C%20uuf50-218%2C%20First%20100.png)
 
 ![uuf50-218-avg](https://github.com/uncttao/par-DPLL/blob/master/SATLIB-Benchmark%20Problems%2C%20uuf50-218%2C%20First%20100.avg.png)
+
+#### uuf75-325 (75 variables and 325 clauses)
+
+This is a more difficult set of problems (more variables and clauses) than the previous set of benchmarks.
 
 ![uuf75-325](https://github.com/uncttao/par-DPLL/blob/master/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.png)
 
