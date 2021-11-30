@@ -4,6 +4,7 @@
 #include "tests/all.h"
 #include "parser.h"
 #include "system.h"
+#include "timing.h"
 
 using namespace std;
 
@@ -18,16 +19,17 @@ int main(int argc, char* argv[]) {
         auto formula = Formula(*parse_cnf(file));
 
 #if TIMING
-        auto t0 = clock();
+        timespec start{}, finish{}, delta{};
+        clock_gettime(CLOCK_REALTIME, &start);
 #endif
         auto sat = dpll(formula);
 #if SHOW_RESULT
         cout << sat << endl;
 #endif
 #if TIMING
-        auto t1 = clock();
-        auto ms = (t1 - t0) * 1000 / CLOCKS_PER_SEC;
-        cout << ms << endl;
+        clock_gettime(CLOCK_REALTIME, &finish);
+        sub_timespec(start, finish, &delta);
+        printf("%d.%.9ld\n", (int) delta.tv_sec, delta.tv_nsec);
 #endif
 
         fb.close();
