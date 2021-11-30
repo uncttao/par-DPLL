@@ -1,1 +1,1 @@
-../../build/bin/clang++ -fopencilk main.cpp -o main -O3
+../../build/bin/clang++ -fopencilk main.cpp -o main -Ofast

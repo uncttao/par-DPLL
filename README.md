@@ -1,4 +1,5 @@
 # par-DPLL
+
 A (parallel) implementation of the classic DPLL algorithm using Cilk
 
 ### Reference
@@ -8,6 +9,16 @@ DPLL algorithm:  https://en.wikipedia.org/wiki/dpll_algorithm
 Cilk: https://github.com/OpenCilk
 
 Benchmark: https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html
+
+### Usage
+
+1. Build or install Cilk into `../../build` (or any directory, but the path in `compile.sh` needs to be changed).
+2. Modify and turn on desired features in `system.h`. Typicall for benchmarks, just use `TIMING`. For solver only, just
+   use `SHOW_RESULT`.
+3. Run `compile.sh`.
+4. To run the benchmarks, download benchmark files and put them in `unsat` and `sat` directories. Then
+   run `benchmark.sh`.
+5. To run the solver, use `./main [path to the CNF file]`.
 
 ### Benchmark
 
