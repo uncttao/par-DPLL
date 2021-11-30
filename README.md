@@ -11,11 +11,13 @@ Benchmark: https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html
 
 ### Benchmark
 
-Benchmark focuses only on UNSAT problems (since SAT instances tend to finish very/too fast).
+The benchmark focuses only on UNSAT problems (since SAT instances tend to finish very/too fast).
 
 The hardware used for the benchmark is https://its.unc.edu/research-computing/longleaf-cluster/.
 
 The CPU model is `AMD EPYC 7313 16-Core Processor`.
+
+The benchmark only accounts for the DPLL *solving* time (not parsing time and etc.).
 
 ![uuf50-218](https://github.com/uncttao/par-DPLL/blob/master/SATLIB-Benchmark%20Problems%2C%20uuf50-218%2C%20First%20100.png)
 
