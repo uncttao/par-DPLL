@@ -44,6 +44,28 @@ This is a more difficult set of problems (more variables and clauses) than the p
 
 ![uuf75-325-avg](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.avg.png)
 
+We also implemented a cut-off scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decrease below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
+
+#### uuf50-218 Cut-off
+
+#### at 10 variables
+
+![uuf50-218-10](https://github.com/uncttao/par-DPLL/blob/master/assets/50-10.png)
+
+#### at 20 variables
+
+![uuf50-218-20](https://github.com/uncttao/par-DPLL/blob/master/assets/50-20.png)
+
+#### uuf75-325 Cut-off
+
+#### at 10 variables
+
+![uuf75-325-10](https://github.com/uncttao/par-DPLL/blob/master/assets/75-10.png)
+
+#### at 20 variables
+
+![uuf75-325-20](https://github.com/uncttao/par-DPLL/blob/master/assets/75-20.png)
+
 ### Evaluation
 
 1) As the difficulty of the UNSAT problems increases, the scaling of the solver tends to improve.
