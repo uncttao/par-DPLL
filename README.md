@@ -44,7 +44,7 @@ This is a more difficult set of problems (more variables and clauses) than the p
 
 ![uuf75-325-avg](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.avg.png)
 
-We also implemented a cut-off scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decrease below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
+We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decrease below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
 
 #### uuf50-218 Cutoff
 
@@ -66,6 +66,10 @@ We also implemented a cut-off scheme such that the solver would no longer fork n
 
 ![uuf75-325-20](https://github.com/uncttao/par-DPLL/blob/master/assets/75-20.png)
 
+#### at 30 variables
+
+![uuf75-325-30](https://github.com/uncttao/par-DPLL/blob/master/assets/75-30.png)
+
 ### Evaluation
 
 1. The scalability per UNSAT problem varies greatly. From the graph, we see that while some problems scale well, it is not so much for many other instances.
@@ -74,11 +78,17 @@ We also implemented a cut-off scheme such that the solver would no longer fork n
 
 3. Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (not shown). The scalability also starts to fall off near 32.
 
-4. The cutoff scheme has a non-neglible effect on scalability.
+4. The cutoff scheme has a non-neglible effect on scalability. However, for the uuf50-218 problem, a cutoff at 20 has a significant negative effect around 32 degrees of parallelism. In other cases, the cutoff scheme yields a slight increase in performance especially at higher parallelism.
 
 ### Comments
 
-Due to the irregularity of (UN)SAT problems, it could be difficult for DPLL solvers to offer consistent speedup even using powerful frameworks such as Cilk. This is also due to the fact that the current implementation is suboptimal.
+Due to the irregularity of (UN)SAT problems, it could be difficult for DPLL solvers to offer consistent speedup even using powerful frameworks such as Cilk. For example, a Cilk subroutine may be halted too soon because it encounters unsatisfiability rather quickly; in general, such behavior decreases scalability as the amount of individual subroutine work is too small to amortize the decent cost associated with parallelization (i.e. coping the entire formula for a new subroutine). Another blocker to scaling is due to that the current SAT solver has many sequential (or yet to be parallelized) parts allowing Amdahl's law to dominate.
+
+In any case, it should be obvious that the more difficult the (UN)SAT problem is, the better scaling results we observe. This is because the cost associated with  parallelization is more amortized as individual subroutine work becomes more complex.
+
+The reason that the system fails to scale (or suffer from performance regression) beyond 32 degrees of parallelism has to do with the causes mentioned in the previous discussions as well as the underlying `AMD EPYC 7313` architecture. As the machine has only 16 x 2 = 32 threads per socket, moving beyond 32 cores carries an extra cost of communication.
+
+In addition, we observe that the cutoff scheme is useful and allows for slight increase in performance especially at greater degrees of parallelism. However, increasing cutoff >= 30 has no more effect on performance. The irregularities of (UN)SAT problems make it difficult to ascertain the optimal cutoff parameter. This optimal parameter is also likely different for different subclasses of (UN)SAT problems, but they are currently treated the same in this regard. In the future, a dynamic, runtime-profiling-based cutoff scheme should be a better option.
 
 ### Todo
 
