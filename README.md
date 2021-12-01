@@ -46,7 +46,7 @@ This is a more difficult set of problems (more variables and clauses) than the p
 
 We also implemented a cut-off scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decrease below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
 
-#### uuf50-218 Cut-off
+#### uuf50-218 Cutoff
 
 #### at 10 variables
 
@@ -56,7 +56,7 @@ We also implemented a cut-off scheme such that the solver would no longer fork n
 
 ![uuf50-218-20](https://github.com/uncttao/par-DPLL/blob/master/assets/50-20.png)
 
-#### uuf75-325 Cut-off
+#### uuf75-325 Cutoff
 
 #### at 10 variables
 
@@ -68,9 +68,13 @@ We also implemented a cut-off scheme such that the solver would no longer fork n
 
 ### Evaluation
 
-1) As the difficulty of the UNSAT problems increases, the scaling of the solver tends to improve.
+1. The scalability per UNSAT problem varies greatly. From the graph, we see that while some problems scale well, it is not so much for many other instances.
 
-2) Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (not shown).
+2. As the difficulty of the UNSAT problems increases, the scaling of the solver tends to improve.
+
+3. Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (not shown). The scalability also starts to fall off near 32.
+
+4. The cutoff scheme has a non-neglible effect on scalability.
 
 ### Comments
 
