@@ -100,17 +100,19 @@ bool dpll(Formula& formula) {
 #endif
 
 #if USE_CILK
-    auto formula2 = formula;
-    bool left = cilk_spawn
-    branch_out(formula2, someLiteral, false);
-    bool right = branch_out(formula, formula.neg_literal(someLiteral), false);
+    if (formula.activeLiterals.size() <= CUTOFF) {
+        return branch_out(formula, someLiteral, true) || branch_out(formula, formula.neg_literal(someLiteral), false);
+    } else {
+        auto formula2 = formula;
+        auto left = cilk_spawn
+        branch_out(formula2, someLiteral, false);
+        auto right = branch_out(formula, formula.neg_literal(someLiteral), false);
+        cilk_sync;
+        return left || right;
+    }
 #else
     // first branch copies formula
     return branch_out(formula, someLiteral, true) || branch_out(formula, formula.neg_literal(someLiteral), false);
-#endif
-#if USE_CILK
-    cilk_sync;
-    return left || right;
 #endif
 }
 
