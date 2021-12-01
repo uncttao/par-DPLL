@@ -44,7 +44,7 @@ This is a more difficult set of problems (more variables and clauses) than the p
 
 ![uuf75-325-avg](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.avg.png)
 
-We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decrease below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
+We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decreases below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
 
 #### uuf50-218 Cutoff
 
