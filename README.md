@@ -82,7 +82,7 @@ We also implemented a cutoff scheme such that the solver would no longer fork ne
 
 ### Comments
 
-Due to the irregularity of (UN)SAT problems, it could be difficult for DPLL solvers to offer consistent speedup even using powerful frameworks such as Cilk. For example, a Cilk subroutine may be halted too soon because it encounters unsatisfiability rather quickly; in general, such behavior decreases scalability as the amount of individual subroutine work is too small to amortize the decent cost associated with parallelization (i.e. coping the entire formula for a new subroutine). Another blocker to scaling is due to that the current SAT solver has many sequential (or yet to be parallelized) parts allowing Amdahl's law to dominate.
+Due to the irregularity of (UN)SAT problems, it could be difficult for DPLL solvers to offer consistent speedup even using powerful frameworks such as Cilk. For example, a Cilk subroutine may be halted too soon because it encounters unsatisfiability rather quickly; in general, such behavior decreases scalability as the amount of individual subroutine work is too small to amortize the decent cost associated with parallelization (i.e. copying the entire formula for a new subroutine). Another blocker to scaling is due to that the current SAT solver has many sequential (or yet to be parallelized) parts allowing Amdahl's law to dominate.
 
 In any case, it should be obvious that the more difficult the (UN)SAT problem is, the better scaling results we observe. This is because the cost associated with  parallelization is more amortized as individual subroutine work becomes more complex.
 
