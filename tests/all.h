@@ -7,10 +7,10 @@
 #include "intset-test.h"
 
 void test_all() {
+    test_intset();
     test_formula();
     test_unit_propagation();
     test_dpll();
-    test_intset();
 }
 
 #endif //PAR_DPLL_ALL_H

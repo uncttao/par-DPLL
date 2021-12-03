@@ -136,9 +136,9 @@ typedef struct Formula {
 
             cnf->push_back(vector<int>());
             auto& cnfClause = cnf->back();
-            for (auto& literal: literalsIn[c].bag()) {
+            literalsIn[c].iterate([this, &cnfClause](int literal) {
                 cnfClause.push_back(cnf_literal(literal));
-            }
+            });
             sort(cnfClause.begin(), cnfClause.end());
         }
 
@@ -149,9 +149,9 @@ typedef struct Formula {
         auto _cnf = new vector<vector<int>>();
         _cnf->resize(numClauses);
         for (auto literal = 0; literal < numLiterals; literal++) {
-            for (auto clause: clausesOf[literal].bag()) {
+            clausesOf[literal].iterate([&_cnf, this, &literal](int clause) {
                 _cnf->at(clause).push_back(cnf_literal(literal));
-            }
+            });
         }
 
         auto cnf = new vector<vector<int>>();
@@ -177,22 +177,22 @@ typedef struct Formula {
 
     void unit_propagation(int u) {
         // remove every clause containing "u"
-        for (auto& clauseOfU: clausesOf[u].bag()) {
+        clausesOf[u].iterate([this](int clauseOfU) {
 #if DEBUG_MODE
             cout << "deleting clause " << clauseOfU << endl;
 #endif
             delete_clause(clauseOfU);
-        }
+        });
 
         // remove every "~u" from every clause
         auto nu = neg_literal(u);
 
-        for (auto& clauseOfNu: clausesOf[nu].bag()) {
+        clausesOf[nu].iterate([this, nu](int clauseOfNu) {
 #if DEBUG_MODE
             cout << "removing " << nu << " from clause " << clauseOfNu << endl;
 #endif
             delete_literal_from(nu, clauseOfNu);
-        }
+        });
     }
 
     [[nodiscard]] int neg_literal(int u) const {
@@ -233,10 +233,10 @@ typedef struct Formula {
         emptyClauses.erase(clause);
 
         // remove all literals from clause
-        for (auto& literal: literalsIn[clause].bag()) {
+        literalsIn[clause].iterate([this, clause](int literal) {
             clausesOf[literal].erase(clause);
             on_literal_change(literal);
-        }
+        });
 
         // clear the clause
         literalsIn[clause].clear();
@@ -271,12 +271,12 @@ typedef struct Formula {
     }
 
     void pure_literal_assign(int literal) {
-        for (auto& clause: clausesOf[literal].bag()) {
+        clausesOf[literal].iterate([this](int clause) {
 #if DEBUG_MODE
             cout << "deleting clause " << clause << endl;
 #endif
             delete_clause(clause);
-        }
+        });
     }
 
     [[nodiscard]] bool is_consistent() const {

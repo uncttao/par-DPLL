@@ -37,23 +37,23 @@ StepResult dpll_step(Formula& formula) {
 #endif
         return Unsat;
     }
-    for (auto& unitClause: formula.unitClauses.bag()) {
+    formula.unitClauses.iterate([&formula](int unitClause) {
         auto& clauseLiterals = formula.literalsIn[unitClause];
         if (clauseLiterals.empty()) {   // possibly empty due to unit propagation
-            continue;
+            return;
         }
         auto literal = clauseLiterals.first();
 #if DEBUG_MODE
         cout << "unit propagate " << formula.cnf_literal(literal) << endl;
 #endif
         formula.unit_propagation(literal);
-    }
-    for (auto& pureLiteral: formula.pureLiterals.bag()) {
+    });
+    formula.pureLiterals.iterate([&formula](int pureLiteral) {
 #if DEBUG_MODE
         cout << "assign pure literal " << formula.cnf_literal(pureLiteral) << endl;
 #endif
         formula.pure_literal_assign(pureLiteral);
-    }
+    });
     return Continue;
 }
 

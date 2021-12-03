@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <functional>
 
 using namespace std;
 
@@ -74,6 +75,20 @@ typedef struct IntSet {
             }
         }
         throw invalid_argument("trying to get first of empty IntSet!");
+    }
+
+    void iterate(function<void(int)> const& func) const {
+        int b[s];
+        auto bi = 0;
+        for (auto i = 0; i < capacity; i++) {
+            if (vec[i]) {
+                b[bi++] = i;
+            }
+        }
+        auto s1 = s;
+        for (auto i = 0; i < s1; i++) {
+            func(b[i]);
+        }
     }
 
     [[nodiscard]] vector<int>& bag() const {
