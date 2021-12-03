@@ -3,7 +3,11 @@
 
 #include <unordered_set>
 #include <iostream>
+
+#if USE_CILK
 #include <cilk/cilk.h>
+#endif
+
 #include "utils.h"
 #include "formula.h"
 #include "system.h"
