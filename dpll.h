@@ -5,7 +5,9 @@
 #include <iostream>
 
 #if USE_CILK
+
 #include <cilk/cilk.h>
+
 #endif
 
 #include "utils.h"
@@ -104,16 +106,20 @@ bool dpll(Formula& formula) {
 #endif
 
 #if USE_CILK
+#if USE_CUTOFF
     if (formula.activeLiterals.size() <= CUTOFF) {
         return branch_out(formula, someLiteral, true) || branch_out(formula, formula.neg_literal(someLiteral), false);
     } else {
+#endif
         auto formula2 = formula;
         auto left = cilk_spawn
         branch_out(formula2, someLiteral, false);
         auto right = branch_out(formula, formula.neg_literal(someLiteral), false);
         cilk_sync;
         return left || right;
+#if USE_CUTOFF
     }
+#endif
 #else
     // first branch copies formula
     return branch_out(formula, someLiteral, true) || branch_out(formula, formula.neg_literal(someLiteral), false);
