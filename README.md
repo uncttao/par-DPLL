@@ -32,17 +32,13 @@ The benchmark only accounts for the DPLL *solving* time (not parsing time and et
 
 #### uuf50-218 (50 variables and 218 clauses)
 
-![uuf50-218](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf50-218%2C%20First%20100.png)
-
-![uuf50-218-avg](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf50-218%2C%20First%20100.avg.png)
+![uuf50-218](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf50-218.png)
 
 #### uuf75-325 (75 variables and 325 clauses)
 
 This is a more difficult set of problems (more variables and clauses) than the previous set of benchmarks.
 
-![uuf75-325](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.png)
-
-![uuf75-325-avg](https://github.com/uncttao/par-DPLL/blob/master/assets/SATLIB-Benchmark%20Problems%2C%20uuf75-325%2C%20First%20100.avg.png)
+![uuf75-325](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf75-325.png)
 
 We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decreases below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
 
@@ -50,25 +46,25 @@ We also implemented a cutoff scheme such that the solver would no longer fork ne
 
 #### at 10 variables
 
-![uuf50-218-10](https://github.com/uncttao/par-DPLL/blob/master/assets/50-10.png)
+![uuf50-218-10](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf50-218-10.png)
 
 #### at 20 variables
 
-![uuf50-218-20](https://github.com/uncttao/par-DPLL/blob/master/assets/50-20.png)
+![uuf50-218-20](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf50-218-20.png)
 
 #### uuf75-325 Cutoff
 
 #### at 10 variables
 
-![uuf75-325-10](https://github.com/uncttao/par-DPLL/blob/master/assets/75-10.png)
+![uuf75-325-10](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf75-325-10.png)
 
 #### at 20 variables
 
-![uuf75-325-20](https://github.com/uncttao/par-DPLL/blob/master/assets/75-20.png)
+![uuf75-325-20](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf75-325-20.png)
 
 #### at 30 variables
 
-![uuf75-325-30](https://github.com/uncttao/par-DPLL/blob/master/assets/75-30.png)
+![uuf75-325-30](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf75-325-30.png)
 
 ### Evaluation
 
@@ -78,7 +74,7 @@ We also implemented a cutoff scheme such that the solver would no longer fork ne
 
 3. Per the benchmark tested, the system ceases to provide further scaling beyond 32 degrees of parallelism (not shown). The scalability also starts to fall off near 32.
 
-4. The cutoff scheme has a non-neglible effect on scalability. However, for the uuf50-218 problem, a cutoff at 20 has a significant negative effect around 32 degrees of parallelism. In other cases, the cutoff scheme yields a slight increase in performance especially at higher parallelism.
+4. The cutoff scheme yields a slight increase in performance especially at higher parallelism for the uuf50-218 problem sets. There is not obvious difference, however, for the uuf75-325 problems.
 
 ### Comments
 
