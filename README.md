@@ -40,7 +40,7 @@ This is a more difficult set of problems (more variables and clauses) than the p
 
 ![uuf75-325](https://github.com/uncttao/par-DPLL/blob/master/assets/uuf75-325.png)
 
-We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decreases below certain numbers. This can be understood as an explicit grainularity control to amortize the cost of creating new Cilk subroutines.
+We also implemented a cutoff scheme such that the solver would no longer fork new Cilk subroutines if the number of active literals decreases below certain numbers. This can be understood as an explicit granularity control to amortize the cost of creating new Cilk subroutines.
 
 #### uuf50-218 Cutoff
 
